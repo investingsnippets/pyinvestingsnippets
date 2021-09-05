@@ -26,7 +26,7 @@ jobs:
           - latest
     env:
       PY_COLORS: 1
-      TOXENV: pip${{ matrix.pip-version }}
+      TOXENV: py${{ matrix.python-version }}
       TOX_PARALLEL_NO_SPINNER: 1
     steps:
     - uses: actions/checkout@v2
@@ -59,7 +59,7 @@ jobs:
           - latest
     env:
       PY_COLORS: 1
-      TOXENV: pip${{ matrix.pip-version }}
+      TOXENV: py${{ python-version }}
       TOX_PARALLEL_NO_SPINNER: 1
     steps:
       - uses: actions/checkout@master
