@@ -31,5 +31,5 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run TOX
       run: |
-        tox -e ${{ matrix.python-version }}
+        tox -e py${{ matrix.python-version }}
 
