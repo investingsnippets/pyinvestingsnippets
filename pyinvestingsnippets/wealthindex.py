@@ -11,6 +11,7 @@ class WealthIndex:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = ((pandas_obj + 1).cumprod()) * 1
+        self._obj.iloc[0] = 1
         self._obj.rename('WealthIndex', inplace=True)
 
     @staticmethod
@@ -36,17 +37,18 @@ class WealthIndex:
         return (self._obj.iloc[-1] ** (1 / no_of_years)) - 1
 
     @property
-    def monthly_rets(self):
+    def monthly_returns(self):
         return self._obj.resample('BM').apply(lambda x: x[-1]).pct_change()
 
     @property
     def positive_monthly_returns_percentage(self):
+        rets = self.monthly_returns
         return round(
-            self.monthly_rets[self.monthly_rets > 0].shape[0] / self.monthly_rets.shape[0] * 100, 2
+            rets[rets > 0].shape[0] / rets.shape[0] * 100, 2
         )
 
     @property
-    def get_annual_returns(self):
+    def annual_returns(self):
         return self._obj.resample('Y').apply(lambda x: x[-1]).pct_change()
 
     def plot(self, ax=None, **kwargs):
