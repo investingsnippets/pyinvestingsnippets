@@ -10,12 +10,11 @@ def test_wealth_index():
     assert isinstance(returns.WealthIndex.wealth_index, pd.Series)
     assert returns.WealthIndex.wealth_index.dtypes == 'float64'
     assert returns.WealthIndex.wealth_index.name == 'WealthIndex'
-    assert pd.isnull(returns.WealthIndex.wealth_index['2000-01-01'])
+    assert returns.WealthIndex.wealth_index['2000-01-01'] == 1
     np.testing.assert_almost_equal(returns.WealthIndex.wealth_index['2001-01-01'], 1.4)
     np.testing.assert_almost_equal(returns.WealthIndex.wealth_index['2002-01-01'], 1.82)
     np.testing.assert_almost_equal(returns.WealthIndex.wealth_index['2003-01-01'], 2.184)
     np.testing.assert_almost_equal(returns.WealthIndex.wealth_index['2004-01-01'], 3.276)
-
 
 def test_get_total_return():
     index_range = pd.date_range(start=pd.datetime(2000, 1, 1), periods=5, freq='AS-JAN')
