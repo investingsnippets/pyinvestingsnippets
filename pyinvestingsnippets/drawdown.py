@@ -56,7 +56,7 @@ class Drawdown:
     def plot_drawdown(self, ax=None, **kwargs):
         """
         Plots the Drawdown
-        
+
         Parameters
         ----------
         ax : matlibplot axis
@@ -65,7 +65,6 @@ class Drawdown:
         Returns
         -------
         matlibplot axis
-
         """
         if ax is None:
             ax = plt.gca()
