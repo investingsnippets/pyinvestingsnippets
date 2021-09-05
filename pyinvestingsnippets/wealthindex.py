@@ -8,10 +8,18 @@ class WealthIndex:
     """Given a Returns Series, will produce the Wealth Index on 1 unit, and other helper stats"""
 
     def __init__(self, returns_series: pd.Series):
-        assert not returns_series.isnull().values.any()
+        # assert not returns_series.isnull().values.any()
+        assert pd.isnull(returns_series[0])
+        assert isinstance(returns_series.index, pd.DatetimeIndex)
         self.returns_series = returns_series
         self.wealth_index = ((returns_series + 1).cumprod()) * 1
         self.wealth_index.rename('WealthIndex', inplace=True)
+        # We do not calculate these in here to avoid unnessessary computations
+        self.total_return = None
+        self.cagr = None
+        self.monthly_returns = None
+        self.positive_monthly_pct = None
+        self.annual_returns = None
 
     def get_wealth_index(self):
         """
@@ -30,7 +38,7 @@ class WealthIndex:
         if self.total_return:
             return self.total_return
 
-        self.total_return = (self.wealth_index[-1] - self.wealth_index[1]) / self.wealth_index[1]
+        self.total_return = self.wealth_index.iloc[-1]
         return self.total_return
 
     def get_compound_annual_growth_rate(self):
@@ -41,7 +49,7 @@ class WealthIndex:
             return self.cagr
 
         no_of_years = len(np.unique(self.wealth_index.index.year))
-        self.cagr = ((self.wealth_index[-1] - self.wealth_index[1]) ** (1 / no_of_years)) - 1
+        self.cagr = (self.wealth_index.iloc[-1] ** (1 / no_of_years)) - 1
         return self.cagr
 
     def get_monthly_returns(self):
