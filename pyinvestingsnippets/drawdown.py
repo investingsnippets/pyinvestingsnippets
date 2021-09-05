@@ -8,42 +8,33 @@ import matplotlib.dates as mdates
 class Drawdown:
     """Given a Wealth Index DataFrame, will produce usefull drawdown metrics"""
 
-    def __init__(self, wealth_index_dataframe: pd.DataFrame):
-        self.wealth_index_df = wealth_index_dataframe
-        assert 'Wealth_Index' in self.wealth_index_df
-        peaks = self.wealth_index_df.Wealth_Index.cummax()
-        self.drawdown_series = (self.wealth_index_df.Wealth_Index - peaks) / peaks
+    def __init__(self, wealth_index_series: pd.Series):
+        self.wealth_index_series = wealth_index_series
+        peaks = self.wealth_index_series.cummax()
+        self.drawdown_series = (self.wealth_index_series - peaks) / peaks
         self.drawdown_series.rename('Drawdown', inplace=True)
 
-    def get_drawdown(self, return_initial_df: bool = False):
+    def get_drawdown(self):
         """
-        Summary line.
-
-        Extended description of function.
-
-        Parameters
-        ----------
-        return_initial_df : bool
-            If passed it will return the initial dataframe with the Wealt_Index
-            and the Drawdown columns included
+        Returns the pandas Series with Drawdown calculated.
 
         Returns
         -------
-        dataframe
-            The dataframe with drawdown
-
+        pd.Series
+            The Drawdown series
         """
 
-        if return_initial_df:
-            self.wealth_index_df['Drawdown'] = self.drawdown_series
-            return self.wealth_index_df
-        else:
-            return self.drawdown_series
+        return self.drawdown_series
 
     def get_max_drawdown(self):
+        """Returns the maximum drawdown"""
         return self.drawdown_series.min()
 
     def compute_drawdown_lagoons_durations(self):
+        """
+        Returns a pd.Series where the index is the last day of the recovery of a lagoon
+        and the value the total days since the previous max value for this lagoon
+        """
         # find all the locations where the drawdown == 0
         zero_locations = np.unique(
             np.r_[(self.drawdown_series == 0).values.nonzero()[0], len(self.drawdown_series) - 1]
@@ -63,10 +54,24 @@ class Drawdown:
         return df['Durations']
 
     def plot_drawdown(self, ax=None, **kwargs):
+        """
+        Plots the Drawdown
+        
+        Parameters
+        ----------
+        ax : matlibplot axis
+        kwargs : Arguments to pass to the plot
+
+        Returns
+        -------
+        matlibplot axis
+
+        """
         if ax is None:
             ax = plt.gca()
 
-        self.drawdown_series.plot(ax=ax, lw=2, kind='area', color='red', alpha=0.3, **kwargs)
+        series_to_plot = self.drawdown_series * 100
+        series_to_plot.plot(ax=ax, lw=2, kind='area', color='red', alpha=0.3, **kwargs)
         ax.yaxis.grid(linestyle=':')
         ax.xaxis.grid(linestyle=':')
         ax.set_ylabel('')

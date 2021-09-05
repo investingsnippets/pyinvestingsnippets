@@ -4,7 +4,7 @@ from pyinvestingsnippets import Drawdown
 
 
 def test_drawdown_and_returns_series():
-    wealth_index = pd.DataFrame(index=pd.Series([0,1,2,3]), data={'Wealth_Index': [0.4, 0.3, 0.2, 0.5]})
+    wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5], index=[0,1,2,3])
     dd = Drawdown(wealth_index)
     assert dd is not None
     drawdown_df = dd.get_drawdown()
@@ -18,29 +18,14 @@ def test_drawdown_and_returns_series():
     np.testing.assert_almost_equal(drawdown_df[3], 0.0)
 
 
-def test_drawdown_and_returns_initial_df():
-    wealth_index = pd.DataFrame(index=pd.Series([0,1,2,3]), data={'Wealth_Index': [0.4, 0.3, 0.2, 0.5]})
-    dd = Drawdown(wealth_index)
-    assert dd is not None
-    drawdown_df = dd.get_drawdown(return_initial_df=True)
-    assert drawdown_df is not None
-    assert isinstance(drawdown_df, pd.DataFrame)
-    assert all(elem in drawdown_df.columns  for elem in ['Wealth_Index', 'Drawdown'])
-    assert drawdown_df['Wealth_Index'][0] == 0.4
-    np.testing.assert_almost_equal(drawdown_df['Drawdown'][0], 0.0)
-    np.testing.assert_almost_equal(drawdown_df['Drawdown'][1], -0.25)
-    np.testing.assert_almost_equal(drawdown_df['Drawdown'][2], -0.5)
-    np.testing.assert_almost_equal(drawdown_df['Drawdown'][3], 0.0)
-
-
 def test_max_drawdown():
-    wealth_index = pd.DataFrame(index=pd.Series([0,1,2,3]), data={'Wealth_Index': [0.4, 0.3, 0.2, 0.5]})
+    wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5], index=[0,1,2,3])
     dd = Drawdown(wealth_index)
     assert dd.get_max_drawdown() == -0.5
 
 
 def test_durations():
-    wealth_index = pd.DataFrame(index=pd.Series([0,1,2,3,4,5,6,7,8]), data={'Wealth_Index': [0.4, 0.3, 0.2, 0.5, 0.4, 0.4, 0.3, 0.3, 0.5]})
+    wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5, 0.4, 0.4, 0.3, 0.3, 0.5], index=[0,1,2,3,4,5,6,7,8]) 
     dd = Drawdown(wealth_index)
     durations = dd.compute_drawdown_lagoons_durations()
     assert isinstance(durations, pd.Series)
