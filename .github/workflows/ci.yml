@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }} / ${{ matrix.pip-version }}
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -22,11 +22,8 @@ jobs:
           - 3.7
           - 3.8
           - 3.9
-        pip-version:
-          - latest
     env:
       PY_COLORS: 1
-      TOXENV: py${{ matrix.python-version }}
       TOX_PARALLEL_NO_SPINNER: 1
     steps:
     - uses: actions/checkout@v2
@@ -42,11 +39,11 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Prepare test environment
       run: tox --notest -p auto --parallel-live
-    - name: Test pip ${{ matrix.pip-version }}
+    - name: Test pip
       run: tox
   
   pypy:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }} / ${{ matrix.pip-version }}
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -59,7 +56,6 @@ jobs:
           - latest
     env:
       PY_COLORS: 1
-      TOXENV: py${{ python-version }}
       TOX_PARALLEL_NO_SPINNER: 1
     steps:
       - uses: actions/checkout@master
@@ -71,5 +67,5 @@ jobs:
         run: pip install tox
       - name: Prepare test environment
         run: tox --notest -p auto --parallel-live
-      - name: Test pip ${{ matrix.pip-version }}
+      - name: Test pip
         run: tox
