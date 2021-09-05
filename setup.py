@@ -7,7 +7,7 @@ here = path.abspath(path.dirname(__file__))
 with open('pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
     version = re.search(r"__version__ = '(.*?)'", f.read()).group(1)
 
-with open('README.rst', 'rb') as f:
+with open('README.md', 'rb') as f:
     content = f.read().decode('utf8')
     long_description = '\n{}'.format(content)
 
@@ -41,6 +41,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
         "Topic :: Office/Business :: Financial",
