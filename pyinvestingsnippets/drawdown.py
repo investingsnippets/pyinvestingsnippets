@@ -21,7 +21,7 @@ class Drawdown:
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
-    def drawdown(self):
+    def data(self):
         """
         Returns the pandas Series with Drawdown calculated.
 
