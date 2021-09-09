@@ -20,7 +20,7 @@ class WealthIndex:
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
-    def wealth_index(self):
+    def data(self):
         return self._obj
 
     @property

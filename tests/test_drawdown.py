@@ -9,7 +9,7 @@ def test_drawdown_and_returns_series():
     wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5], index=index_range)
     dd = wealth_index.Drawdown
     assert dd is not None
-    drawdown_df = dd.drawdown
+    drawdown_df = dd.data
     assert drawdown_df is not None
     assert isinstance(drawdown_df, pd.Series)
     assert drawdown_df.dtypes == 'float64'
