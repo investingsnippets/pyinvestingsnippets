@@ -3,5 +3,5 @@ from .drawdown import Drawdown
 from .wealthindex import WealthIndex
 
 
-__version__ = '0.0.9'
+__version__ = '0.0.10'
 __all__ = ['Drawdown', 'WealthIndex']
