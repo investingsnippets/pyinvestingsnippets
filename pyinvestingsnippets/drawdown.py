@@ -62,7 +62,7 @@ class Drawdown:
         df = df.dropna()
         return df['Durations']
 
-    def plot(self, ax=None, **kwargs):
+    def plot(self, ax=None, **kwargs):  # pragma: no cover
         """
         Plots the Drawdown
 
