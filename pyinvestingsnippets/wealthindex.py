@@ -1,12 +1,14 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-# import matplotlib.ticker as mtick
+import matplotlib.ticker as mtick
 
 
 @pd.api.extensions.register_series_accessor("WealthIndex")
 class WealthIndex:
-    """Given a Returns Series, will produce the Wealth Index on 1 unit, and other helper stats"""
+    """Given a Returns Series, will produce the Wealth Index
+    on 1 unit, and other helper stats
+    """
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
@@ -43,15 +45,13 @@ class WealthIndex:
     @property
     def positive_monthly_returns_percentage(self):
         rets = self.monthly_returns
-        return round(
-            rets[rets > 0].shape[0] / rets.shape[0] * 100, 2
-        )
+        return round(rets[rets > 0].shape[0] / rets.shape[0] * 100, 2)
 
     @property
     def annual_returns(self):
         return self._obj.resample('Y').apply(lambda x: x[-1]).pct_change()
 
-    def plot(self, ax=None, **kwargs):
+    def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:
             ax = plt.gca()
 
@@ -67,42 +67,42 @@ class WealthIndex:
         ax.set_ylabel('Wealth Index')
         return ax
 
-    # def plot_yearly_returns(self, ax=None, **kwargs):
-    #     if ax is None:
-    #         ax = plt.gca()
+    def plot_annual_returns(self, ax=None, **kwargs):  # pragma: no cover
+        if ax is None:
+            ax = plt.gca()
 
-    #     self.get_annual_returns().plot(ax=ax, kind="bar")
-    #     ax.yaxis.grid(linestyle=':')
-    #     ax.xaxis.grid(linestyle=':')
-    #     ax.set_ylabel('')
-    #     ax.set_xlabel('')
-    #     ax.xaxis.grid(False)
-    #     plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
+        self.annual_returns.plot(ax=ax, kind="bar")
+        ax.yaxis.grid(linestyle=':')
+        ax.xaxis.grid(linestyle=':')
+        ax.set_ylabel('')
+        ax.set_xlabel('')
+        ax.xaxis.grid(False)
+        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
 
-    #     ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-    #     yearly_dates = [i for i in self.get_annual_returns().index.strftime('%Y')]
-    #     ax.set_xticklabels(yearly_dates, fontsize='small')
-    #     ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+        yearly_dates = [i for i in self.get_annual_returns().index.strftime('%Y')]
+        ax.set_xticklabels(yearly_dates, fontsize='small')
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
-    #     ax.set_title('Yearly Returns (%)', fontweight='bold')
-    #     return ax
+        ax.set_title('Yearly Returns (%)', fontweight='bold')
+        return ax
 
-    # def plot_monthly_returns(self, ax=None, **kwargs):
-    #     if ax is None:
-    #         ax = plt.gca()
+    def plot_monthly_returns(self, ax=None, **kwargs):  # pragma: no cover
+        if ax is None:
+            ax = plt.gca()
 
-    #     self.get_monthly_returns().plot(ax=ax, kind="bar")
-    #     ax.yaxis.grid(linestyle=':')
-    #     ax.xaxis.grid(linestyle=':')
-    #     ax.set_ylabel('')
-    #     ax.set_xlabel('')
-    #     ax.xaxis.grid(False)
-    #     plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
+        self.monthly_returns.plot(ax=ax, kind="bar")
+        ax.yaxis.grid(linestyle=':')
+        ax.xaxis.grid(linestyle=':')
+        ax.set_ylabel('')
+        ax.set_xlabel('')
+        ax.xaxis.grid(False)
+        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
 
-    #     ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-    #     monthly_dates = [i for i in self.get_monthly_returns().index.strftime('%Y-%m')]
-    #     ax.set_xticklabels(monthly_dates, fontsize='small')
-    #     ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+        monthly_dates = [i for i in self.get_monthly_returns().index.strftime('%Y-%m')]
+        ax.set_xticklabels(monthly_dates, fontsize='small')
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
-    #     ax.set_title('Monthly Returns (%)', fontweight='bold')
-    #     return ax
+        ax.set_title('Monthly Returns (%)', fontweight='bold')
+        return ax

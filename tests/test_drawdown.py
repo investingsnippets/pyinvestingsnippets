@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
-from pyinvestingsnippets import Drawdown
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 
 def test_drawdown_and_returns_series():
-    index_range = pd.date_range(start=pd.datetime(2000, 1, 1), periods=4, freq='AS-JAN')
+    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=4, freq='AS-JAN')
     wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5], index=index_range)
     dd = wealth_index.Drawdown
     assert dd is not None
@@ -21,13 +20,13 @@ def test_drawdown_and_returns_series():
 
 
 def test_max_drawdown():
-    index_range = pd.date_range(start=pd.datetime(2000, 1, 1), periods=4, freq='AS-JAN')
+    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=4, freq='AS-JAN')
     wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5], index=index_range)
     assert wealth_index.Drawdown.max_drawdown == -0.5
 
 
 def test_durations():
-    index_range = pd.date_range(start=pd.datetime(2000, 1, 1), periods=9, freq='AS-JAN')
+    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=9, freq='AS-JAN')
     wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5, 0.4, 0.4, 0.3, 0.3, 0.5], index=index_range) 
     durations = wealth_index.Drawdown.durations
     assert isinstance(durations, pd.Series)
