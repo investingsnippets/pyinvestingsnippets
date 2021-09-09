@@ -80,7 +80,7 @@ class WealthIndex:
         plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-        yearly_dates = [i for i in self.get_annual_returns().index.strftime('%Y')]
+        yearly_dates = [i for i in self.annual_returns.index.strftime('%Y')]
         ax.set_xticklabels(yearly_dates, fontsize='small')
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
@@ -100,7 +100,7 @@ class WealthIndex:
         plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-        monthly_dates = [i for i in self.get_monthly_returns().index.strftime('%Y-%m')]
+        monthly_dates = [i for i in self.monthly_returns.index.strftime('%Y-%m')]
         ax.set_xticklabels(monthly_dates, fontsize='small')
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
