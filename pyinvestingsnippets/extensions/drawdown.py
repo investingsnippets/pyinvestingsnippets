@@ -5,7 +5,7 @@ import matplotlib.ticker as mtick
 import matplotlib.dates as mdates
 
 
-@pd.api.extensions.register_series_accessor("Drawdown")
+@pd.api.extensions.register_series_accessor("drawdown")
 class Drawdown:
     """Given a Wealth Index DataFrame, will produce usefull drawdown metrics"""
 
@@ -79,7 +79,9 @@ class Drawdown:
             ax = plt.gca()
 
         series_to_plot = self._obj * 100
-        series_to_plot.plot(ax=ax, lw=2, kind='area', color='red', alpha=0.3, **kwargs)
+        if 'color' not in kwargs:
+            kwargs['color'] = 'red'
+        series_to_plot.plot(ax=ax, lw=2, kind='area', alpha=0.3, **kwargs)
         ax.yaxis.grid(linestyle=':')
         ax.xaxis.grid(linestyle=':')
         ax.set_ylabel('')
@@ -92,5 +94,5 @@ class Drawdown:
         ax.xaxis.set_major_locator(mdates.YearLocator(1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
 
-        ax.set_title('Drawdown (%)', fontweight='bold')
+        ax.set_title('Drawdown', fontweight='bold')
         return ax
