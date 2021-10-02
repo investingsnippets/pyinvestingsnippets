@@ -39,7 +39,7 @@ class DownsideRisk:
 
         ax.set_title(
             f"Exp. weighted downside risk \
-            ({self.window}) - Decay factor {self.decay_factor}",
+({self.window}) - Decay factor {self.decay_factor}",
             fontweight="bold",
         )
         return ax

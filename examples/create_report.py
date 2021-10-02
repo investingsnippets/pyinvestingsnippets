@@ -30,9 +30,11 @@ start_date = end_date - datetime.timedelta(days=5 * 365)
 end_date_frmt = end_date.strftime("%Y-%m-%d")
 start_date_frmt = start_date.strftime("%Y-%m-%d")
 
-apple_stock_prices = retrieve_stock_data("AAPL", start_date_frmt, end_date_frmt)
-msft_stock_prices = retrieve_stock_data("MSFT", start_date_frmt, end_date_frmt)
-spy_index_prices = retrieve_stock_data("SPY", start_date_frmt, end_date_frmt)
+ASSET_1 = 'AAPL'
+ASSET_2 = 'SPY'
+
+asset1_prices = retrieve_stock_data(ASSET_1, start_date_frmt, end_date_frmt)
+asset2_prices = retrieve_stock_data(ASSET_2, start_date_frmt, end_date_frmt)
 
 # rc = {
 #     'lines.linewidth': 1.0,
@@ -71,67 +73,63 @@ ax_downside_risk = plt.subplot(gs[4, 4:])
 ax_stats = plt.subplot(gs[5, :2])
 ax_beta = plt.subplot(gs[5, 2:4])
 
+asset1_rets = asset1_prices[ASSET_1].prices.returns
+asset2_rets = asset2_prices[ASSET_2].prices.returns
 
-aapl_rets = apple_stock_prices['AAPL'].prices.returns
-msft_rets = msft_stock_prices['MSFT'].prices.returns
-spy_rets = spy_index_prices['SPY'].prices.returns
+asset1_wi = asset1_rets.wealth_index
+asset1_dd = asset1_wi.drawdown
+asset1_dd_dur = asset1_dd.durations
 
-aapl_wi = aapl_rets.wealth_index
-aapl_dd = aapl_wi.drawdown
-aapl_dd_dur = aapl_dd.durations
+asset2_wi = asset2_rets.wealth_index
+asset2_dd = asset2_wi.drawdown
+asset2_dd_dur = asset2_dd.durations
 
-msft_wi = msft_rets.wealth_index
+asset1_wi.plot(ax=ax_equity, color='green', label=ASSET_1)
+asset2_wi.plot(ax=ax_equity, color='grey', label=ASSET_2)
 
-spy_wi = spy_rets.wealth_index
-spy_dd = spy_wi.drawdown
-spy_dd_dur = spy_dd.durations
+asset1_dd.plot(ax=ax_drawdown, color='green')
+asset2_dd.plot(ax=ax_drawdown, color='grey')
 
-aapl_wi.plot(ax=ax_equity, color='green', label='APPL')
-msft_wi.plot(ax=ax_equity, color='blue', label='MSFT')
-spy_wi.plot(ax=ax_equity, color='grey', label='SPY')
+asset1_wi.monthly_returns.plot(ax=ax_monthly_returns, color='green')
+asset1_wi.annual_returns.plot(ax=ax_yearly_returns, color='green')
 
-aapl_dd.plot(ax=ax_drawdown, color='green')
-spy_dd.plot(ax=ax_drawdown, color='grey')
-
-aapl_wi.monthly_returns.plot(ax=ax_monthly_returns)
-aapl_wi.annual_returns.plot(ax=ax_yearly_returns)
-
-rolling_rets = pyinvestingsnippets.RollingReturns(aapl_rets.data, rolling_window=252)
+rolling_rets = pyinvestingsnippets.RollingReturns(asset1_rets.data, rolling_window=252)
 
 # 3 month rolling annualized vol
-rolling_vol = pyinvestingsnippets.RollingVolatility(aapl_rets.data, rolling_window=90, window=252)
+rolling_vol = pyinvestingsnippets.RollingVolatility(asset1_rets.data, rolling_window=90, window=252)
 
 # get the monthly rolling beta
-rolling_beta = pyinvestingsnippets.RollingBetaRegression(spy_rets.data, aapl_rets.data, 30)
-rolling_beta.plot(ax=ax_beta, color='red', label='regr')
-rolling_beta = pyinvestingsnippets.RollingBetaCovariance(spy_rets.data, aapl_rets.data, 30)
+# rolling_beta = pyinvestingsnippets.RollingBetaRegression(asset2_rets.data, asset1_rets.data, 30)
+# rolling_beta.plot(ax=ax_beta, color='red', label='regr')
+rolling_beta = pyinvestingsnippets.RollingBetaCovariance(asset2_rets.data, asset1_rets.data, 30)
 rolling_beta.plot(ax=ax_beta, color='green', label='cov')
 
 # get the total beta
-beta = pyinvestingsnippets.BetaCovariance(spy_wi.monthly_returns.data, aapl_wi.monthly_returns.data)
+beta = pyinvestingsnippets.BetaCovariance(asset2_wi.monthly_returns.data, asset1_wi.monthly_returns.data)
 
 rolling_rets.plot(ax=ax_rolling_returns)
 rolling_vol.plot(ax=ax_rolling_vol)
 
-downside_risk = pyinvestingsnippets.DownsideRisk(aapl_rets.data)
+downside_risk = pyinvestingsnippets.DownsideRisk(asset1_rets.data)
 downside_risk.plot(ax=ax_downside_risk)
-
-print(apple_stock_prices['AAPL'].prices.weekly_returns.data.shape)
-print(apple_stock_prices['AAPL'].prices.weekly_returns.srri.data)
 
 def _plot_stats(ax=None, **kwargs):
     if ax is None:
         ax = plt.gca()
 
     data = [
-        ['Total Return', '{:.0%}'.format(aapl_wi.total_return), '{:.0%}'.format(spy_wi.total_return)],
-        ['CAGR', '{:.2%}'.format(aapl_wi.cagr), '{:.2%}'.format(spy_wi.cagr)],
-        ['Max Drawdown', '{:.2%}'.format(aapl_dd.max_drawdown), '{:.2%}'.format(spy_dd.max_drawdown)],
-        ['Avg Drawdown Duration', aapl_dd_dur.mean(), spy_dd_dur.mean()],
-        ['Max Drawdown Duration', aapl_dd_dur.max(), spy_dd_dur.max()],
+        ['Total Return', '{:.0%}'.format(asset1_wi.total_return), '{:.0%}'.format(asset2_wi.total_return)],
+        ['CAGR', '{:.2%}'.format(asset1_wi.cagr), '{:.2%}'.format(asset2_wi.cagr)],
+        ['Max Drawdown', '{:.2%}'.format(asset1_dd.max_drawdown), '{:.2%}'.format(asset2_dd.max_drawdown)],
+        ['Avg Drawdown Duration', asset1_dd_dur.mean(), asset2_dd_dur.mean()],
+        ['Max Drawdown Duration', asset1_dd_dur.max(), asset2_dd_dur.max()],
+        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices[ASSET_1].prices.monthly_returns.srri.risk_class,
+                    asset1_prices[ASSET_1].prices.monthly_returns.srri.value),
+                '{}/7 ({:.2%})'.format(asset2_prices[ASSET_2].prices.monthly_returns.srri.risk_class,
+                    asset2_prices[ASSET_2].prices.monthly_returns.srri.value)],
         ['Beta', '{:.2}'.format(beta.beta), '1']
     ]
-    column_labels=["Metric", "Asset", "Benchmark"]
+    column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
     ax.axis('tight')
     ax.axis('off')
     ax.table(cellText=data, colLabels=column_labels, loc="center", edges='open')

@@ -32,14 +32,14 @@ class MonthlyReturns:
             ax = plt.gca()
 
         series_to_plot = self._obj * 100
-        series_to_plot.plot(ax=ax, kind="bar")
+        series_to_plot.plot(ax=ax, kind="bar", **kwargs)
         ax.yaxis.grid(linestyle=":")
         ax.xaxis.grid(linestyle=":")
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
         plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
-
+        
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         monthly_dates = [i for i in self._obj.index.strftime("%Y-%m")]
         ax.set_xticklabels(monthly_dates, fontsize="small")

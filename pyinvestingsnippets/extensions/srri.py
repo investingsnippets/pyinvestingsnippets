@@ -5,7 +5,7 @@ import numpy as np
 @pd.api.extensions.register_series_accessor("srri")
 class SRRI:
     """
-    Synthetic Risk and Reward Indicator
+    Synthetic Risk and Reward Indicator (Standard Deviation over 5 Years)
     https://www.esma.europa.eu/sites/default/files/library/2015/11/10_673.pdf
 
     The volatility of the fund shall be computed,
@@ -16,7 +16,7 @@ class SRRI:
     non overlapping periods of the duration of 1/m years.
     This means m=52 and T= 260 for weekly returns, and m=12 and T=60 for monthly
     returns; and where r-mean_f is the arithmetic mean of
-    the returns of the fund over the T periods:
+    the returns of the fund over the T periods
     """
 
     RISK_CLASSES = {
