@@ -22,7 +22,7 @@ class AnnualReturns:
             ax = plt.gca()
 
         series_to_plot = self._obj * 100
-        series_to_plot.plot(ax=ax, kind="bar")
+        series_to_plot.plot(ax=ax, kind="bar", **kwargs)
         ax.yaxis.grid(linestyle=":")
         ax.xaxis.grid(linestyle=":")
         ax.set_ylabel("")
