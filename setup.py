@@ -27,7 +27,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://pyinvestingsnippets.readthedocs.io/',
-    packages=find_packages(exclude=['docs', 'tests', 'secrets']),
+    packages=find_packages(exclude=['docs', 'tests', 'examples', 'secrets']),
     include_package_data=True,
     test_suite='test.test_suite',
     python_requires='>=3.7',
