@@ -5,7 +5,7 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 with open('pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
-    version = re.search(r"__version__ = '(.*?)'", f.read()).group(1)
+    version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 with open('README.md', 'rb') as f:
     content = f.read().decode('utf8')

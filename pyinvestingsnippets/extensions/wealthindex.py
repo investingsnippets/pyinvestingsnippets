@@ -33,9 +33,7 @@ class WealthIndex:
 
     @property
     def cagr(self):
-        """
-        Returns compound_annual_growth_rate
-        """
+        """Returns compound_annual_growth_rate"""
         no_of_years = len(np.unique(self._obj.index.year))
         return (self._obj.iloc[-1] ** (1 / no_of_years)) - 1
 
