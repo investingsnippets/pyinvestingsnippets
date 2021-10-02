@@ -1,3 +1,5 @@
+# pylint: disable=F401
+# flake8: noqa
 """Python tools for stock analysis"""
 from .extensions.drawdown import Drawdown
 from .extensions.wealthindex import WealthIndex
@@ -17,9 +19,20 @@ from .utilities.beta_covariance import BetaCovariance
 from .utilities.beta_regression import BetaRegression
 
 
-__version__ = '0.0.10'
-__all__ = ['Drawdown', 'WealthIndex', 'Prices', 'SRRI',
-           'MonthlyReturns', 'WeeklyReturns', 'AnnualReturns',
-           'Returns', 'RollingReturns', 'RollingVolatility',
-           'BetaCovariance', 'BetaRegression', 'DownsideRisk'
-           'RollingBetaRegression', 'RollingBetaCovariance']
+__version__ = "0.0.10"
+__all__ = [
+    "Drawdown",
+    "WealthIndex",
+    "Prices",
+    "SRRI",
+    "MonthlyReturns",
+    "WeeklyReturns",
+    "AnnualReturns",
+    "Returns",
+    "RollingReturns",
+    "RollingVolatility",
+    "BetaCovariance",
+    "BetaRegression",
+    "DownsideRisk" "RollingBetaRegression",
+    "RollingBetaCovariance",
+]

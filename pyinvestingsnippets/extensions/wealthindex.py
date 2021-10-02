@@ -42,7 +42,7 @@ class WealthIndex:
     @property
     def monthly_returns(self):
         return self._obj.monthly_returns
-    
+
     @property
     def weekly_returns(self):
         return self._obj.weekly_returns
@@ -56,14 +56,14 @@ class WealthIndex:
             ax = plt.gca()
 
         self._obj.plot(lw=2, alpha=0.7, x_compat=False, ax=ax, **kwargs)
-        ax.yaxis.grid(linestyle=':')
-        ax.xaxis.grid(linestyle=':')
-        ax.set_ylabel('')
-        ax.set_xlabel('')
+        ax.yaxis.grid(linestyle=":")
+        ax.xaxis.grid(linestyle=":")
+        ax.set_ylabel("")
+        ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
-        ax.legend(loc='best')
+        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
+        ax.legend(loc="best")
 
-        ax.axhline(1.0, linestyle='--', color='black', lw=1)
-        ax.set_ylabel('Wealth Index')
+        ax.axhline(1.0, linestyle="--", color="black", lw=1)
+        ax.set_ylabel("Wealth Index")
         return ax

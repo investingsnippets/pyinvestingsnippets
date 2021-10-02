@@ -16,10 +16,11 @@ class RollingBetaRegression:
 
     We use the lenear regression formula in this implementation.
     """
- 
+
     def __init__(self, independent_variable, dependent_variable, window):
         """
-        Calculates the rolling beta of a Stock over the Benchmark index using linear regression
+        Calculates the rolling beta of a Stock over the
+        Benchmark index using linear regression
 
         Parameters
         ----------
@@ -27,7 +28,7 @@ class RollingBetaRegression:
         dependent_variable : Stock Returns
         window : rolling window
         """
-        
+
         self.independent_variable = independent_variable.dropna()
         self.dependent_variable = dependent_variable.dropna()
         self.window = window
@@ -39,12 +40,12 @@ class RollingBetaRegression:
         for i in range((obs - window)):
             model = LinearRegression().fit(
                 self.independent_variable.to_numpy()[i : i + window + 1].reshape(-1, 1),
-                self.dependent_variable.to_numpy()[i : i + window + 1]
+                self.dependent_variable.to_numpy()[i : i + window + 1],
             )
 
-            betas[i+window] = model.coef_[0]
-            alphas[i+window] = model.intercept_
-        
+            betas[i + window] = model.coef_[0]
+            alphas[i + window] = model.intercept_
+
         self.rolling_beta = pd.Series(data=betas, index=self.independent_variable.index)
 
     @property
@@ -61,17 +62,17 @@ class RollingBetaRegression:
             ax = plt.gca()
 
         self.rolling_beta.plot(lw=2, x_compat=False, ax=ax, **kwargs)
-        ax.yaxis.grid(linestyle=':')
-        ax.xaxis.grid(linestyle=':')
-        ax.set_ylabel('')
-        ax.set_xlabel('')
+        ax.yaxis.grid(linestyle=":")
+        ax.xaxis.grid(linestyle=":")
+        ax.set_ylabel("")
+        ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
+        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
 
         ax.xaxis.set_tick_params(reset=True)
         ax.xaxis.set_major_locator(mdates.YearLocator(1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-        ax.legend(loc='best')
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        ax.legend(loc="best")
 
-        ax.set_title(f"Rolling Beta - {self.window}", fontweight='bold')
+        ax.set_title(f"Rolling Beta - {self.window}", fontweight="bold")
         return ax

@@ -11,7 +11,7 @@ class Returns:
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = pandas_obj.fillna(method='pad').pct_change()
+        self._obj = pandas_obj.fillna(method="pad").pct_change()
 
     @staticmethod
     def _validate(obj):
@@ -39,7 +39,7 @@ class Returns:
     def plot(self):  # pragma: no cover
         gridkw = dict(height_ratios=[5, 1])
         fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw=gridkw)
-        fig.suptitle("Returns", weight='bold')
-        sns.histplot(data=self._obj, ax=ax1) #array, top subplot
-        sns.boxplot(data=self._obj, ax=ax2, width=.4) #bottom subplot
+        fig.suptitle("Returns", weight="bold")
+        sns.histplot(data=self._obj, ax=ax1)  # array, top subplot
+        sns.boxplot(data=self._obj, ax=ax2, width=0.4)  # bottom subplot
         return fig
