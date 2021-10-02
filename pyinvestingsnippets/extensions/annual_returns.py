@@ -5,10 +5,9 @@ import matplotlib.ticker as mtick
 
 @pd.api.extensions.register_series_accessor("annual_returns")
 class AnnualReturns:
-
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = pandas_obj.fillna(method='pad').resample('Y').last().pct_change()
+        self._obj = pandas_obj.fillna(method="pad").resample("Y").last().pct_change()
 
     @staticmethod
     def _validate(obj):
@@ -24,17 +23,17 @@ class AnnualReturns:
 
         series_to_plot = self._obj * 100
         series_to_plot.plot(ax=ax, kind="bar")
-        ax.yaxis.grid(linestyle=':')
-        ax.xaxis.grid(linestyle=':')
-        ax.set_ylabel('')
-        ax.set_xlabel('')
+        ax.yaxis.grid(linestyle=":")
+        ax.xaxis.grid(linestyle=":")
+        ax.set_ylabel("")
+        ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha='center')
+        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-        yearly_dates = [i for i in self._obj.index.strftime('%Y')]
-        ax.set_xticklabels(yearly_dates, fontsize='small')
+        yearly_dates = [i for i in self._obj.index.strftime("%Y")]
+        ax.set_xticklabels(yearly_dates, fontsize="small")
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 
-        ax.set_title('Annual Returns', fontweight='bold')
+        ax.set_title("Annual Returns", fontweight="bold")
         return ax
