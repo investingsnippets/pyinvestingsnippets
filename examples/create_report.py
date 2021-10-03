@@ -64,14 +64,13 @@ gs = gridspec.GridSpec(rows, cols, figure=fig)
 
 ax_equity = plt.subplot(gs[0, :])
 ax_drawdown = plt.subplot(gs[1, :])
-ax_rolling_sharpe = plt.subplot(gs[2, :])
-ax_monthly_returns = plt.subplot(gs[3, :3])
-ax_yearly_returns = plt.subplot(gs[3, 3:])
-ax_rolling_returns = plt.subplot(gs[4, :2])
-ax_rolling_vol = plt.subplot(gs[4, 2:4])
-ax_downside_risk = plt.subplot(gs[4, 4:])
-ax_stats = plt.subplot(gs[5, :2])
-ax_beta = plt.subplot(gs[5, 2:4])
+ax_monthly_returns = plt.subplot(gs[2, :3])
+ax_yearly_returns = plt.subplot(gs[2, 3:])
+ax_rolling_returns = plt.subplot(gs[3, :2])
+ax_rolling_vol = plt.subplot(gs[3, 2:4])
+ax_downside_risk = plt.subplot(gs[3, 4:])
+ax_stats = plt.subplot(gs[4, :3])
+ax_beta = plt.subplot(gs[4, 3:])
 
 asset1_rets = asset1_prices[ASSET_1].prices.returns
 asset2_rets = asset2_prices[ASSET_2].prices.returns
@@ -84,14 +83,14 @@ asset2_wi = asset2_rets.wealth_index
 asset2_dd = asset2_wi.drawdown
 asset2_dd_dur = asset2_dd.durations
 
-asset1_wi.plot(ax=ax_equity, color='green', label=ASSET_1)
+asset1_wi.plot(ax=ax_equity, color='blue', label=ASSET_1)
 asset2_wi.plot(ax=ax_equity, color='grey', label=ASSET_2)
 
-asset1_dd.plot(ax=ax_drawdown, color='green')
+asset1_dd.plot(ax=ax_drawdown, color='blue')
 asset2_dd.plot(ax=ax_drawdown, color='grey')
 
-asset1_wi.monthly_returns.plot(ax=ax_monthly_returns, color='green')
-asset1_wi.annual_returns.plot(ax=ax_yearly_returns, color='green')
+asset1_wi.monthly_returns.plot(ax=ax_monthly_returns, color='blue')
+asset1_wi.annual_returns.plot(ax=ax_yearly_returns, color='blue')
 
 rolling_rets = pyinvestingsnippets.RollingReturns(asset1_rets.data, rolling_window=252)
 
@@ -102,16 +101,16 @@ rolling_vol = pyinvestingsnippets.RollingVolatility(asset1_rets.data, rolling_wi
 # rolling_beta = pyinvestingsnippets.RollingBetaRegression(asset2_rets.data, asset1_rets.data, 30)
 # rolling_beta.plot(ax=ax_beta, color='red', label='regr')
 rolling_beta = pyinvestingsnippets.RollingBetaCovariance(asset2_rets.data, asset1_rets.data, 30)
-rolling_beta.plot(ax=ax_beta, color='green', label='cov')
+rolling_beta.plot(ax=ax_beta, color='blue', label='cov')
 
 # get the total beta
 beta = pyinvestingsnippets.BetaCovariance(asset2_wi.monthly_returns.data, asset1_wi.monthly_returns.data)
 
-rolling_rets.plot(ax=ax_rolling_returns)
-rolling_vol.plot(ax=ax_rolling_vol)
+rolling_rets.plot(ax=ax_rolling_returns, color='blue')
+rolling_vol.plot(ax=ax_rolling_vol, color='blue')
 
-downside_risk = pyinvestingsnippets.DownsideRisk(asset1_rets.data)
-downside_risk.plot(ax=ax_downside_risk)
+downside_risk = pyinvestingsnippets.ExponantiallyWeightedDownsideRisk(asset1_rets.data)
+downside_risk.plot(ax=ax_downside_risk, color='blue')
 
 def _plot_stats(ax=None, **kwargs):
     if ax is None:
@@ -132,16 +131,14 @@ def _plot_stats(ax=None, **kwargs):
     column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
     ax.axis('tight')
     ax.axis('off')
-    ax.table(cellText=data, colLabels=column_labels, loc="center", edges='open')
+    table = ax.table(cellText=data, colLabels=column_labels, loc="center", edges='open')
+    table.set_fontsize(10)
+    table.scale(1.5, 1.5)
 
     ax.grid(False)
-    ax.spines['top'].set_linewidth(2.0)
-    ax.spines['bottom'].set_linewidth(2.0)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_visible(False)
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
-    ax.set_ylabel('')
+    ax.set_ylabel("Stats")
     ax.set_xlabel('')
 
     ax.axis([0, 10, 0, 10])

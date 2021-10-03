@@ -7,3 +7,28 @@
 
 
 # Python Module for Investing Snippets
+
+
+## Develop
+
+First install the required venv and tox
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install tox
+```
+
+Run tox test and lint
+
+```
+tox
+```
+
+Install the package locally
+
+```
+pip install .tox/dist/pyinvestingsnippets-<version>.zip
+```
+
+## Release

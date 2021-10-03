@@ -36,6 +36,9 @@ setup(
     install_requires=requirements(filename='requirements.txt'),
     setup_requires=['pytest-runner', 'flake8'],
     tests_require=requirements(filename='requirements-dev.txt'),
+    extras_require={
+        'tests':requirements(filename='requirements-dev.txt')
+    },
     zip_safe=False,
     entry_points={
         'console_scripts': ['pyinvestingsnippets = pyinvestingsnippets.__main__:main']

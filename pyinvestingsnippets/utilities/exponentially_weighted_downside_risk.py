@@ -3,7 +3,7 @@ import matplotlib.ticker as mtick
 import matplotlib.dates as mdates
 
 
-class DownsideRisk:
+class ExponantiallyWeightedDownsideRisk:
     """A measure of variability derived from volatility of returns is
     the downside risk, the volatility computed only on negative returns
     (or returns below a given threshold)
@@ -38,8 +38,8 @@ class DownsideRisk:
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
 
         ax.set_title(
-            f"Exp. weighted downside risk \
-({self.window}) - Decay factor {self.decay_factor}",
+            f"Exp. weighted downside risk ({self.window}) \
+    \n- Decay factor {self.decay_factor}",
             fontweight="bold",
         )
         return ax
