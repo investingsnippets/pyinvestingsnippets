@@ -19,7 +19,7 @@ from .utilities.beta_covariance import BetaCovariance
 from .utilities.beta_regression import BetaRegression
 
 
-__version__ = "0.0.10"
+__version__ = "1.0.0"
 __all__ = [
     "Drawdown",
     "WealthIndex",
