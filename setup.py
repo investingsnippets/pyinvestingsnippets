@@ -11,12 +11,14 @@ with open('README.md', 'rb') as f:
     content = f.read().decode('utf8')
     long_description = '\n{}'.format(content)
 
+
 def requirements(filename):
     reqs = list()
     with open(filename, encoding='utf8') as f:
         for line in f.readlines():
             reqs.append(line.strip())
     return reqs
+
 
 setup(
     name='pyinvestingsnippets',
@@ -32,6 +34,8 @@ setup(
     test_suite='test.test_suite',
     python_requires='>=3.7',
     install_requires=requirements(filename='requirements.txt'),
+    setup_requires=['pytest-runner', 'flake8'],
+    tests_require=requirements(filename='requirements-dev.txt'),
     zip_safe=False,
     entry_points={
         'console_scripts': ['pyinvestingsnippets = pyinvestingsnippets.__main__:main']
@@ -49,7 +53,7 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Software Development :: Libraries"
     ],
-    keywords=', '.join([ 'investing', 'financial-data' ]),
+    keywords=', '.join(['investing', 'financial-data']),
     project_urls={
         'Bug Reports': 'https://github.com/investingsnippets/pyinvestingsnippets/issues',
         'Source': 'https://github.com/investingsnippets/pyinvestingsnippets',
