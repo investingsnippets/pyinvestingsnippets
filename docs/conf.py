@@ -10,16 +10,20 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
+import pyinvestingsnippets
+
+version = release = pyinvestingsnippets.__version__
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'Investingsnippets'
+project = 'pyinvestingsnippets'
 copyright = '2021, Investingsnippets'
-author = 'Investingsnippets'
+author = 'pyinvestingsnippets'
 
 
 # -- General configuration ---------------------------------------------------
@@ -28,7 +32,18 @@ author = 'Investingsnippets'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
 ]
+
+autodoc_member_order = "bysource"
+autoclass_content = "both"
+autodoc_inherit_docstrings = False
+autodoc_docstring_signature = False
+coverage_skip_undoc_in_source = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -46,7 +61,13 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_theme = 'alabaster'
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+on_rtd = os.environ.get("READTHEDOCS", None) == "True"
+
+# On RTD we can't import sphinx_rtd_theme, but it will be applied by
+# default anyway.  This block will use the same theme when building locally
+# as on RTD.
+if not on_rtd:
+    import sphinx_rtd_theme
+
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]

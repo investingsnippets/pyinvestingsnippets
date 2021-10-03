@@ -5,8 +5,9 @@
 ![CodeQL](https://github.com/investingsnippets/pyinvestingsnippets/workflows/CodeQL/badge.svg)
 
 
-
 # Python Module for Investing Snippets
+
+Pandas extensions and utility classes for stock and investment analysis. 
 
 
 ## Develop
