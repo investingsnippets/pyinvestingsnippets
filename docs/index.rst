@@ -12,6 +12,19 @@ Quick links
 * Current version: |version| (`download from PyPI <https://pypi.python.org/pypi/pyinvestingsnippets>`_)
 * `Source (GitHub) <https://github.com/investingsnippets/pyinvestingsnippets>`_
 
+Features
+--------
+
+* WealthIndex
+* Drawdown
+* `SRRI <https://www.esma.europa.eu/sites/default/files/library/2015/11/10_673.pdf>`_
+* Weekly/Monthly/Annual Returns
+* Rolling Returns
+* Rolling Volatility
+* Beta (regression/covariance)
+* Rolling Beta (regression/covariance)
+* Exponentially Weighted Downside Risk
+
 Example
 -------
 

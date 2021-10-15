@@ -14,7 +14,9 @@ from .utilities.rolling_returns import RollingReturns
 from .utilities.rolling_volatility import RollingVolatility
 from .utilities.rolling_beta_regression import RollingBetaRegression
 from .utilities.rolling_beta_covariance import RollingBetaCovariance
-from .utilities.exponentially_weighted_downside_risk import ExponantiallyWeightedDownsideRisk
+from .utilities.exponentially_weighted_downside_risk import (
+    ExponantiallyWeightedDownsideRisk,
+)
 from .utilities.beta_covariance import BetaCovariance
 from .utilities.beta_regression import BetaRegression
 

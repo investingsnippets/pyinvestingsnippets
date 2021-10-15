@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-import pyinvestingsnippets
 
 
 def test_drawdown_and_returns_series():
