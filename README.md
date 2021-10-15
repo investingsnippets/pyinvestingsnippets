@@ -35,3 +35,13 @@ pip install .tox/dist/pyinvestingsnippets-<version>.zip
 ```
 
 ## Release
+
+On master change the version
+
+```
+git commit -am "v0.0.3"
+git tag -a v0.0.3
+git push origin --tags
+git push -u
+tox -e release
+```
