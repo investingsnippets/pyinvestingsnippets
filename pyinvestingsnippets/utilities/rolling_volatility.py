@@ -23,7 +23,7 @@ class RollingVolatility:
 
     def __init__(self, pandas_obj, rolling_window, window=252):
         self._validate(pandas_obj)
-        self.window = window
+        self.rolling_window = rolling_window
         self._obj = (
             pandas_obj.fillna(method="pad")
             .rolling(window=rolling_window)
@@ -57,5 +57,5 @@ class RollingVolatility:
         ax.xaxis.set_major_locator(mdates.YearLocator(1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
 
-        ax.set_title(f"Rolling Volatility - {self.window}", fontweight="bold")
+        ax.set_title(f"Rolling Volatility - {self.rolling_window}", fontweight="bold")
         return ax
