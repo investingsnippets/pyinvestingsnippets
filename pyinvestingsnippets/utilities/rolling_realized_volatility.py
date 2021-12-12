@@ -1,11 +1,12 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.dates as mdates
 
 
-class RollingVolatility:
-    """Given an Arithmentic Returns Series, will build the rolling volatility.
+class RollingRealizedVolatility:
+    """Given an Logarithmic Returns Series, will build the rolling realized volatility.
 
     Depending on the input Returns Series:
     - Daily, Weekly, Monthly
@@ -24,13 +25,12 @@ class RollingVolatility:
     def __init__(self, pandas_obj: pd.Series, rolling_window: int, window: int = 252):
         self._validate(pandas_obj, rolling_window, window)
         self.rolling_window = rolling_window
-        self._obj = (
-            pandas_obj.fillna(method="pad")
-            .rolling(window=rolling_window)
-            .std()
-            .apply(lambda x: x * window ** 0.5)
+        factor = window / rolling_window
+        self._obj = np.sqrt(
+            pandas_obj.fillna(method="pad").rolling(window=rolling_window).var()
+            * factor
         )
-        self._obj.rename("Rolling_Vol", inplace=True)
+        self._obj.rename("Rolling_Realized_Vol", inplace=True)
 
     @staticmethod
     def _validate(obj: pd.Series, rolling_window: int, window: int):

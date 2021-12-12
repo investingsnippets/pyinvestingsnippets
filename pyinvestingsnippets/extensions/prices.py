@@ -24,6 +24,10 @@ class Prices:
         return self._obj.returns
 
     @property
+    def log_returns(self):
+        return self._obj.log_returns
+
+    @property
     def weekly_returns(self):
         return self._obj.weekly_returns
 
