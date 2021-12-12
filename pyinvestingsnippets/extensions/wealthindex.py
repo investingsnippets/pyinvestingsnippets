@@ -5,21 +5,21 @@ import matplotlib.pyplot as plt
 
 @pd.api.extensions.register_series_accessor("wealth_index")
 class WealthIndex:
-    """Given a Returns Series, will produce the Wealth Index
-    on 1 unit, and other helper stats
+    """Given an Arithmetic Returns Series, will produce the
+    Wealth Index on 1 unit, and other helper stats
     """
 
-    def __init__(self, pandas_obj):
+    def __init__(self, pandas_obj: pd.Series):
         self._validate(pandas_obj)
         self._obj = ((pandas_obj + 1).cumprod()) * 1
         self._obj.iloc[0] = 1
 
     @staticmethod
-    def _validate(obj):
+    def _validate(obj: pd.Series):
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
-    def data(self):
+    def data(self) -> pd.Series:
         return self._obj
 
     @property
