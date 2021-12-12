@@ -8,16 +8,20 @@ import matplotlib.dates as mdates
 class RollingReturns:
     """Given a Returns Series, will build the rolling returns using window"""
 
-    def __init__(self, pandas_obj, rolling_window=252):
-        self._validate(pandas_obj)
+    def __init__(self, pandas_obj: pd.Series, rolling_window: int = 252):
+        self._validate(pandas_obj, rolling_window)
         self.window = rolling_window
         self._obj = (1 + pandas_obj).rolling(window=rolling_window).apply(
             np.prod, raw=True
         ) - 1
+        self._obj.rename("Rolling_Rets", inplace=True)
 
     @staticmethod
-    def _validate(obj):
+    def _validate(obj: pd.Series, rolling_window: int):
         assert isinstance(obj.index, pd.DatetimeIndex)
+        assert rolling_window > 0 and isinstance(
+            rolling_window, int
+        ), "rolling_window must be possitive integer"
 
     @property
     def data(self):

@@ -26,32 +26,33 @@ class SRRI:
         4: {"low": 0.05, "high": 0.1},
         5: {"low": 0.1, "high": 0.15},
         6: {"low": 0.15, "high": 0.25},
-        7: {"low": 0.25, "high": 1},
+        7: {"low": 0.25, "high": 100},
     }
 
-    def __init__(self, pandas_obj) -> None:
+    def __init__(self, pandas_obj: pd.Series) -> None:
         pandas_obj = pandas_obj.dropna()
         self._validate(pandas_obj)
         deviations = pandas_obj - pandas_obj.mean()
         squared_deviations = np.sum(deviations ** 2)
         factor = 52 / (260 - 1) if pandas_obj.shape[0] == 260 else 12 / (60 - 1)
         to_root = factor * squared_deviations
-        self._obj = np.sqrt(to_root)
+        self.srri_value = np.sqrt(to_root)
 
     @staticmethod
-    def _validate(obj):
+    def _validate(obj: pd.Series):
+        assert isinstance(obj, pd.Series)
         # 5 years of weekly returns data (5 * 52) or 5 * 12 monthly
         assert obj.shape[0] in [260, 60]
 
     @property
-    def value(self):
-        return self._obj
+    def value(self) -> pd.Series:
+        return self.srri_value
 
     @property
     def risk_class(self):
         for i in SRRI.RISK_CLASSES:
             if (
-                self._obj >= SRRI.RISK_CLASSES[i]["low"]
-                and self._obj < SRRI.RISK_CLASSES[i]["high"]
+                self.srri_value >= SRRI.RISK_CLASSES[i]["low"]
+                and self.srri_value < SRRI.RISK_CLASSES[i]["high"]
             ):
                 return i
