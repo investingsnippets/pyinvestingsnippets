@@ -29,6 +29,10 @@ class Returns:
         return self._obj[since:].wealth_index
 
     @property
+    def srri(self):
+        return self._obj.srri
+
+    @property
     def rolling_returns(self):
         return self._obj.rolling_returns
 
