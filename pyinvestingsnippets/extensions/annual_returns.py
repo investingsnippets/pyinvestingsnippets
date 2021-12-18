@@ -17,6 +17,17 @@ class AnnualReturns:
     def data(self):
         return self._obj
 
+    @property
+    def annualized(self):
+        """Returns the annualized return."""
+        comp_growth = (1 + self._obj).prod()
+        return comp_growth ** (1 / self._obj.shape[0]) - 1
+
+    @property
+    def volatility_annualized(self):
+        """Returns the annualized volatility."""
+        return self._obj.std() * (1 ** 0.5)
+
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:
             ax = plt.gca()

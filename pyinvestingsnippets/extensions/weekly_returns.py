@@ -25,6 +25,17 @@ class WeeklyReturns:
     def positive_weekly_returns_percentage(self):
         return round(self._obj[self._obj > 0].shape[0] / self._obj.shape[0] * 100, 2)
 
+    @property
+    def annualized(self):
+        """Returns the annualized return."""
+        comp_growth = (1 + self._obj).prod()
+        return comp_growth ** (52 / self._obj.shape[0]) - 1
+
+    @property
+    def volatility_annualized(self):
+        """Returns the annualized volatility."""
+        return self._obj.std() * (52 ** 0.5)
+
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:
             ax = plt.gca()

@@ -28,6 +28,21 @@ class Returns:
     def wealth_index_since(self, since=None):
         return self._obj[since:].wealth_index
 
+    def annualized(self, ppy=252):
+        """Returns the annualized return based on the days provided.
+        This is not a property because the incoming prices are of
+        undefined periodicity.
+        """
+        comp_growth = (1 + self._obj).prod()
+        return comp_growth ** (ppy / self._obj.shape[0]) - 1
+
+    def volatility_annualized(self, ppy):
+        """Returns the annualized volatility based on the days provided.
+        This is not a property because the incoming prices are of
+        undefined periodicity.
+        """
+        return self._obj.std() * (ppy ** 0.5)
+
     @property
     def srri(self):
         return self._obj.srri
