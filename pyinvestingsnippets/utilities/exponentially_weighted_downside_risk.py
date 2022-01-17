@@ -35,6 +35,8 @@ class ExponantiallyWeightedDownsideRisk:
         ax.xaxis.set_tick_params(reset=True)
         ax.xaxis.set_major_locator(mdates.YearLocator(1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.set_title(
             f"Exp. weighted downside risk ({self.window}) \

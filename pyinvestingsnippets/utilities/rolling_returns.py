@@ -52,7 +52,8 @@ class RollingReturns:
             label=f"Avg ({to_plot.mean():0.2f}%)",
         )
         ax.axhline(y=0, color="black", lw=0.5)
-        ax.legend(loc="best")
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.set_title(f"Rolling Returns - {self.window}", fontweight="bold")
         return ax

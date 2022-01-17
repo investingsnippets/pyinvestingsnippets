@@ -49,6 +49,8 @@ class Prices:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.axhline(1.0, linestyle="--", color="black", lw=1)
         ax.set_ylabel("Price")

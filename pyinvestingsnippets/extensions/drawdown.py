@@ -87,6 +87,8 @@ class Drawdown:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         ax.xaxis.set_tick_params(reset=True)
