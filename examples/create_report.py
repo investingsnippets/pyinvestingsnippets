@@ -1,59 +1,26 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import seaborn as sns
 
 import datetime
 
-
-from yahoofinancials import YahooFinancials
-import pandas as pd
 import matplotlib.pyplot as plt
-import dateutil.parser
+import pandas_datareader as web
 
-import pyinvestingsnippets
-
-def retrieve_stock_data(ticker, start, end):
-    json = YahooFinancials(ticker).get_historical_price_data(start, end, "daily")
-    columns=["adjclose"]  # ["open","close","adjclose"]
-    df = pd.DataFrame(columns=columns)
-    for row in json[ticker]["prices"]:
-        d = dateutil.parser.isoparse(row["formatted_date"])
-        df.loc[d] = [row["adjclose"]] # [row["open"], row["close"], row["adjclose"]]
-    df.index.name = "date"
-    df.columns = [ticker]
-    return df
-
+import sys, os
+sys.path.insert(1, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+import pyinvestingsnippets 
 
 end_date = datetime.datetime.now()
 start_date = end_date - datetime.timedelta(days=5 * 365)
 end_date_frmt = end_date.strftime("%Y-%m-%d")
 start_date_frmt = start_date.strftime("%Y-%m-%d")
 
-ASSET_1 = 'AAPL'
+ASSET_1 = 'MSFT'
 ASSET_2 = 'SPY'
 
-asset1_prices = retrieve_stock_data(ASSET_1, start_date_frmt, end_date_frmt)
-asset2_prices = retrieve_stock_data(ASSET_2, start_date_frmt, end_date_frmt)
-
-# rc = {
-#     'lines.linewidth': 1.0,
-#     'axes.facecolor': '0.995',
-#     'figure.facecolor': '0.97',
-#     'font.family': 'sans-serif',
-#     'font.sans-serif': 'Times New Roman',
-#     'font.monospace': 'Courier',
-#     'font.size': 10,
-#     'axes.labelsize': 10,
-#     'axes.labelweight': 'bold',
-#     'axes.titlesize': 10,
-#     'xtick.labelsize': 8,
-#     'ytick.labelsize': 8,
-#     'legend.fontsize': 10,
-#     'figure.titlesize': 12
-# }
-
-# sns.set(style='whitegrid', context=rc, palette='deep')
+asset1_prices = web.DataReader(ASSET_1, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
+asset2_prices = web.DataReader(ASSET_2, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
 
 rows = 6
 cols = 6
@@ -72,8 +39,8 @@ ax_downside_risk = plt.subplot(gs[3, 4:])
 ax_stats = plt.subplot(gs[4, :3])
 ax_beta = plt.subplot(gs[4, 3:])
 
-asset1_rets = asset1_prices[ASSET_1].prices.returns
-asset2_rets = asset2_prices[ASSET_2].prices.returns
+asset1_rets = asset1_prices.prices.returns
+asset2_rets = asset2_prices.prices.returns
 
 asset1_wi = asset1_rets.wealth_index
 asset1_dd = asset1_wi.drawdown
@@ -122,10 +89,10 @@ def _plot_stats(ax=None, **kwargs):
         ['Max Drawdown', '{:.2%}'.format(asset1_dd.max_drawdown), '{:.2%}'.format(asset2_dd.max_drawdown)],
         ['Avg Drawdown Duration', asset1_dd_dur.mean(), asset2_dd_dur.mean()],
         ['Max Drawdown Duration', asset1_dd_dur.max(), asset2_dd_dur.max()],
-        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices[ASSET_1].prices.monthly_returns.srri.risk_class,
-                    asset1_prices[ASSET_1].prices.monthly_returns.srri.value),
-                '{}/7 ({:.2%})'.format(asset2_prices[ASSET_2].prices.monthly_returns.srri.risk_class,
-                    asset2_prices[ASSET_2].prices.monthly_returns.srri.value)],
+        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.prices.monthly_returns.srri.risk_class,
+                    asset1_prices.prices.monthly_returns.srri.value),
+                '{}/7 ({:.2%})'.format(asset2_prices.prices.monthly_returns.srri.risk_class,
+                    asset2_prices.prices.monthly_returns.srri.value)],
         ['Beta', '{:.2}'.format(beta.beta), '1']
     ]
     column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
