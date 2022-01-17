@@ -39,7 +39,6 @@ class AnnualReturns:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         yearly_dates = [i for i in self._obj.index.strftime("%Y")]
