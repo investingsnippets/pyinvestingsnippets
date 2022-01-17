@@ -24,7 +24,7 @@ class ExponantiallyWeightedDownsideRisk:
             ax = plt.gca()
 
         to_plot = self.downside_risk * 100
-        to_plot.plot(lw=2, x_compat=False, ax=ax, **kwargs)
+        to_plot.plot(lw=2, x_compat=True, ax=ax, **kwargs)
         ax.yaxis.grid(linestyle=":")
         ax.xaxis.grid(linestyle=":")
         ax.set_ylabel("")
