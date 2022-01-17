@@ -59,7 +59,6 @@ class WealthIndex:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
         ax.legend(loc="best")
 
         ax.axhline(1.0, linestyle="--", color="black", lw=1)

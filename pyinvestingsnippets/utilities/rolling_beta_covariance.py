@@ -51,7 +51,6 @@ class RollingBetaCovariance:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
 
         ax.xaxis.set_tick_params(reset=True)
         ax.xaxis.set_major_locator(mdates.YearLocator(1))

@@ -57,7 +57,6 @@ class RollingRealizedVolatility:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
-        plt.setp(ax.get_xticklabels(), visible=True, rotation=0, ha="center")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         ax.xaxis.set_tick_params(reset=True)
