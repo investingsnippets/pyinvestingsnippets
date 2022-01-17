@@ -53,6 +53,7 @@ class Prices:
             ax.legend(loc="best")
 
         ax.axhline(1.0, linestyle="--", color="black", lw=1)
+        ax.tick_params(axis='x', labelrotation=45)
         ax.set_ylabel("Price")
         ax.set_xlabel("Date")
         return ax
