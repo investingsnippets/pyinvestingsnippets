@@ -61,7 +61,7 @@ class RollingBetaRegression:
         if ax is None:
             ax = plt.gca()
 
-        self.rolling_beta.plot(lw=2, x_compat=False, ax=ax, **kwargs)
+        self.rolling_beta.plot(lw=2, x_compat=True, ax=ax, **kwargs)
         ax.yaxis.grid(linestyle=":")
         ax.xaxis.grid(linestyle=":")
         ax.set_ylabel("")

@@ -43,7 +43,7 @@ class Prices:
         if ax is None:
             ax = plt.gca()
 
-        self._obj.plot(lw=2, alpha=0.7, x_compat=False, ax=ax, **kwargs)
+        self._obj.plot(lw=2, alpha=0.7, x_compat=True, ax=ax, **kwargs)
         ax.yaxis.grid(linestyle=":")
         ax.xaxis.grid(linestyle=":")
         ax.set_ylabel("")
