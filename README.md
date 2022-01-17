@@ -34,6 +34,16 @@ Install the package locally
 pip install .tox/dist/pyinvestingsnippets-<version>.zip
 ```
 
+## Run examples
+
+```
+python3 -m venv .venvtest
+source .venvtest/bin/activate
+pip install -r requirements.txt
+pip install -r examples/requirements.txt
+python examples/create_report.py
+```
+
 ## Release
 
 On master change the version
