@@ -92,8 +92,7 @@ class Drawdown:
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         ax.xaxis.set_tick_params(reset=True)
-        ax.xaxis.set_major_locator(mdates.YearLocator(1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        ax.tick_params(axis='x', labelrotation=45)
 
         ax.set_title("Drawdown", fontweight="bold")
         return ax

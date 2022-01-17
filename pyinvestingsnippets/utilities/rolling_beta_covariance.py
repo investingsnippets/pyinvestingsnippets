@@ -53,8 +53,7 @@ class RollingBetaCovariance:
         ax.xaxis.grid(False)
 
         ax.xaxis.set_tick_params(reset=True)
-        ax.xaxis.set_major_locator(mdates.YearLocator(1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        ax.tick_params(axis='x', labelrotation=45)
         if 'label' in kwargs:
             ax.legend(loc="best")
 

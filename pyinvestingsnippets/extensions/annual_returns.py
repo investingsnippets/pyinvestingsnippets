@@ -46,6 +46,7 @@ class AnnualReturns:
         yearly_dates = [i for i in self._obj.index.strftime("%Y")]
         ax.set_xticklabels(yearly_dates, fontsize="small")
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.tick_params(axis='x', labelrotation=45)
 
         ax.set_title("Annual Returns", fontweight="bold")
         return ax

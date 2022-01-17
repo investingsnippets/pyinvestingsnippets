@@ -53,7 +53,7 @@ class WeeklyReturns:
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         weekly_dates = [i for i in self._obj.index.strftime("%W")]
         ax.set_xticklabels(weekly_dates, fontsize="small")
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.tick_params(axis='x', labelrotation=45)
 
         ax.set_title("Weekly Returns", fontweight="bold")
         return ax

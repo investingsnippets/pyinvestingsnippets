@@ -55,7 +55,7 @@ class MonthlyReturns:
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         monthly_dates = [i for i in self._obj.index.strftime("%Y-%m")]
         ax.set_xticklabels(monthly_dates, fontsize="small")
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+        ax.tick_params(axis='x', labelrotation=45)
 
         ax.set_title("Monthly Returns", fontweight="bold")
         return ax
