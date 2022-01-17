@@ -39,6 +39,8 @@ class AnnualReturns:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
         yearly_dates = [i for i in self._obj.index.strftime("%Y")]

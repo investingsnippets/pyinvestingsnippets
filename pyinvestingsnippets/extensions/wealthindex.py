@@ -59,7 +59,8 @@ class WealthIndex:
         ax.set_ylabel("")
         ax.set_xlabel("")
         ax.xaxis.grid(False)
-        ax.legend(loc="best")
+        if 'label' in kwargs:
+            ax.legend(loc="best")
 
         ax.axhline(1.0, linestyle="--", color="black", lw=1)
         ax.set_ylabel("Wealth Index")
