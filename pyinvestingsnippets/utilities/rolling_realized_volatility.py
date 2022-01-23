@@ -30,7 +30,6 @@ class RollingRealizedVolatility:
             pandas_obj.fillna(method="pad").rolling(window=rolling_window).var()
             * factor
         )
-        self._obj.rename("Rolling_Realized_Vol", inplace=True)
 
     @staticmethod
     def _validate(obj: pd.Series, rolling_window: int, window: int):

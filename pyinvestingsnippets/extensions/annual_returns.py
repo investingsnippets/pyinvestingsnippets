@@ -8,6 +8,7 @@ class AnnualReturns:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = pandas_obj.fillna(method="pad").resample("Y").last().pct_change()
+        self._obj.index = self._obj.index.year
 
     @staticmethod
     def _validate(obj):
