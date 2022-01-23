@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.dates as mdates
+import plotly.express as px
 
 
 class RollingReturns:
@@ -14,7 +15,6 @@ class RollingReturns:
         self._obj = (1 + pandas_obj).rolling(window=rolling_window).apply(
             np.prod, raw=True
         ) - 1
-        self._obj.rename("Rolling_Rets", inplace=True)
 
     @staticmethod
     def _validate(obj: pd.Series, rolling_window: int):
@@ -56,3 +56,6 @@ class RollingReturns:
 
         ax.set_title(f"Rolling Returns - {self.window}", fontweight="bold")
         return ax
+    
+    def plotly(self, **kwargs): # pragma: no cover
+        return px.line(self._obj, **kwargs)

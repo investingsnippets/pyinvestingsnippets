@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 
 @pd.api.extensions.register_series_accessor("wealth_index")
@@ -65,3 +66,6 @@ class WealthIndex:
         ax.axhline(1.0, linestyle="--", color="black", lw=1)
         ax.set_ylabel("Wealth Index")
         return ax
+
+    def plotly(self, **kwargs): # pragma: no cover
+        return px.line(self._obj, **kwargs)
