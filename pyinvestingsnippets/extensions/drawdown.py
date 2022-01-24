@@ -101,4 +101,8 @@ class Drawdown:
     def plotly(self, **kwargs): # pragma: no cover
         fig = px.line(self._obj , **kwargs)
         fig.layout.yaxis.tickformat = '.1%'
+        fig.update_layout(
+            title="Drawdown",
+            legend_title="Symbol",
+        )
         return fig
