@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-import matplotlib.dates as mdates
 import plotly.express as px
 
 
@@ -14,7 +13,6 @@ class Drawdown:
         self._validate(pandas_obj)
         peaks = pandas_obj.cummax()
         self._obj = (pandas_obj - peaks) / peaks
-        # self._obj.rename("Drawdown", inplace=True)
 
     @staticmethod
     def _validate(obj):
@@ -98,8 +96,8 @@ class Drawdown:
         ax.set_title("Drawdown", fontweight="bold")
         return ax
 
-    def plotly(self, **kwargs): # pragma: no cover
-        fig = px.line(self._obj , **kwargs)
+    def plotly(self, **kwargs):  # pragma: no cover
+        fig = px.line(self._obj, **kwargs)
         fig.layout.yaxis.tickformat = '.1%'
         fig.update_layout(
             title="Drawdown",

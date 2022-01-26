@@ -41,7 +41,7 @@ python3 -m venv .venvtest
 source .venvtest/bin/activate
 pip install -r requirements.txt
 pip install -r examples/requirements.txt
-python examples/create_report.py
+python examples/matplotlib_report.py
 ```
 
 ## Release

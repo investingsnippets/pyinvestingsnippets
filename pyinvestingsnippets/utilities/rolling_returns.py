@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-import matplotlib.dates as mdates
 import plotly.express as px
 
 
@@ -56,6 +55,6 @@ class RollingReturns:
 
         ax.set_title(f"Rolling Returns - {self.window}", fontweight="bold")
         return ax
-    
-    def plotly(self, **kwargs): # pragma: no cover
+
+    def plotly(self, **kwargs):  # pragma: no cover
         return px.line(self._obj, **kwargs)

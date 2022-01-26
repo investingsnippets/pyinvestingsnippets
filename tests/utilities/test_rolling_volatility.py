@@ -19,7 +19,7 @@ def test_rolling_volatility_monthly():
     assert rolling_rets_df is not None
     assert isinstance(rolling_rets_df, pd.Series)
     assert rolling_rets_df.dtypes == 'float64'
-    assert rolling_rets_df.name == 'Rolling_Vol'
+    assert rolling_rets_df.name == returns.name
     assert rolling_rets_df[1:9].isna().all()
 
 
