@@ -12,7 +12,7 @@ def test_drawdown_and_returns_series():
     assert drawdown_df is not None
     assert isinstance(drawdown_df, pd.Series)
     assert drawdown_df.dtypes == 'float64'
-    assert drawdown_df.name == 'Drawdown'
+    assert drawdown_df.name == wealth_index.name
     np.testing.assert_almost_equal(drawdown_df['2000-01-01'], 0.0)
     np.testing.assert_almost_equal(drawdown_df['2001-01-01'], -0.25)
     np.testing.assert_almost_equal(drawdown_df['2002-01-01'], -0.5)

@@ -18,11 +18,8 @@ import sys, os
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 import pyinvestingsnippets 
 
-
-end_date = datetime.datetime.now()
-start_date = end_date - datetime.timedelta(days=5 * 365)
-end_date_frmt = end_date.strftime("%Y-%m-%d")
-start_date_frmt = start_date.strftime("%Y-%m-%d")
+ASSET_TICKERS = ['Asset1', 'Asset2', 'Asset3', 'Asset4']
+BENCHMARK_TICKERS = ['Bench1', 'Bench2']
 
 def tracking_error(r_a, r_b):
     """
@@ -36,21 +33,13 @@ def blank_fig():
     fig.update_layout(template = None)
     fig.update_xaxes(showgrid = False, showticklabels = False, zeroline=False)
     fig.update_yaxes(showgrid = False, showticklabels = False, zeroline=False)
-    
     return fig
+
 
 def gbm(n_years = 10, n_scenarios=1000, mu=0.07, sigma=0.15, steps_per_year=12, s_0=100.0, prices=True):
     """
-    Evolution of Geometric Brownian Motion trajectories, such as for Stock Prices through Monte Carlo
-    :param n_years:  The number of years to generate data for
-    :param n_paths: The number of scenarios/trajectories
-    :param mu: Annualized Drift, e.g. Market Return
-    :param sigma: Annualized Volatility
-    :param steps_per_year: granularity of the simulation
-    :param s_0: initial value
-    :return: a numpy array of n_paths columns and n_years*steps_per_year rows
+    Geometric Brownian Motion
     """
-    # Derive per-step Model Parameters from User Specifications
     dt = 1/steps_per_year
     n_steps = int(n_years*steps_per_year) + 1
     # the standard way ...
@@ -91,7 +80,7 @@ controls = dbc.Row(
         }),
         dcc.Dropdown(
             id='dropdown_tickers',
-            options=[{'label': i, 'value': i} for i in ['MSFT', 'FB']],
+            options=[{'label': i, 'value': i} for i in ASSET_TICKERS],
             value=[],  # default value
             multi=True
         ),
@@ -100,7 +89,7 @@ controls = dbc.Row(
         }),
         dcc.Dropdown(
             id='dropdown_benchmark',
-            options=[{'label': i, 'value': i} for i in ['SPY', '^GSPC']],
+            options=[{'label': i, 'value': i} for i in BENCHMARK_TICKERS],
             value=[],  # default value
             multi=False
         ),
@@ -254,8 +243,10 @@ def collect_params(n_clicks, dropdown_tickers_value, dropdown_benchmark_value, r
     if not n_clicks:
         raise PreventUpdate
     
-    from dateutil.relativedelta import relativedelta
-    yrs_ago = datetime.datetime.now() - relativedelta(days=radio_years_value*252)
+    end_date = datetime.datetime.now()
+    start_date = end_date - datetime.timedelta(days=5*365)
+    end_date_frmt = end_date.strftime("%Y-%m-%d")
+    start_date_frmt = start_date.strftime("%Y-%m-%d")
 
     global asset_prices
     asset_prices = []
@@ -265,14 +256,16 @@ def collect_params(n_clicks, dropdown_tickers_value, dropdown_benchmark_value, r
         prices.index = pd.bdate_range(end=datetime.datetime.now(), periods=prices.shape[0]) # generates a time index
         
         prices.name = asset
-        prices = prices.loc[yrs_ago.strftime("%Y-%m-%d"):]
+        prices = prices.loc[start_date.strftime("%Y-%m-%d"):]
         asset_prices.append({'ticker': asset, 'price': prices, 'color': px.colors.qualitative.Alphabet[i]})
 
     global benchmark_price
     benchmark_price = None
-    bench_price = web.DataReader(dropdown_benchmark_value, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
+    # bench_price = web.DataReader(dropdown_benchmark_value, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
+    bench_price = gbm(10, 1, steps_per_year=252).iloc[:, 0] # gets the fist column of dataframe as series
+    bench_price.index = pd.bdate_range(end=datetime.datetime.now(), periods=bench_price.shape[0]) # generates a time index
     bench_price.name = dropdown_benchmark_value
-    bench_price = bench_price.loc[yrs_ago.strftime("%Y-%m-%d"):]
+    bench_price = bench_price.loc[start_date.strftime("%Y-%m-%d"):]
     benchmark_price = {'ticker': dropdown_benchmark_value, 'price': bench_price, 'color': px.colors.qualitative.Alphabet[-1]}
 
     return {
@@ -307,7 +300,6 @@ def update_wi(data):
         title="Performance on 1$",
         legend_title="Symbol",
     )
-
     return fig_wi
 
 
@@ -336,7 +328,6 @@ def update_dd(data):
         title="Drawdown",
         legend_title="Symbol",
     )
-
     return fig_dd
 
 
@@ -357,9 +348,10 @@ def update_arets(data):
 
     ann_rets_fig.update_layout(
         title="Annual Returns",
+        xaxis_title="",
+        yaxis_title="",
         legend_title="Symbol",
     )
-
     return ann_rets_fig
 
 @app.callback(
@@ -387,7 +379,6 @@ def update_graph_rolling_rets(data):
         title="Rolling Returns",
         legend_title="Symbol",
     )
-
     return fig
 
 @app.callback(
@@ -415,7 +406,6 @@ def update_graph_rolling_vol(data):
         title="Rolling Volatility",
         legend_title="Symbol",
     )
-
     return fig
 
 
@@ -452,22 +442,20 @@ def update_graph_stats(data):
     if data is None:
         raise PreventUpdate
 
-
     all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'CAGR', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration']}]
     for asset in asset_prices:
         asset_values = []
-        asset_values.append(f"{asset['price'].prices.returns.wealth_index.total_return*100:.2}%")
-        asset_values.append(f"{asset['price'].prices.returns.wealth_index.cagr*100:.2}%")
-        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2}%")
+        asset_values.append(f"{asset['price'].prices.returns.wealth_index.total_return*100:.2f}%")
+        asset_values.append(f"{asset['price'].prices.returns.wealth_index.cagr*100:.2f}%")
+        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
         asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.mean()}")
         asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.max()}")
         all_stats.append({'name':asset['ticker'], 'vals': asset_values})
     
-
     asset_values = []
-    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.total_return*100:.2}%")
-    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.cagr*100:.2}%")
-    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2}%")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.total_return*100:.2f}%")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.cagr*100:.2f}%")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
     asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.mean()}")
     asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.max()}")
     all_stats.append({'name': benchmark_price['ticker'], 'vals': asset_values})

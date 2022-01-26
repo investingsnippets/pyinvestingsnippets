@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-import matplotlib.dates as mdates
 
 
 class ExponantiallyWeightedDownsideRisk:

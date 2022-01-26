@@ -67,7 +67,7 @@ class WealthIndex:
         ax.set_ylabel("Wealth Index")
         return ax
 
-    def plotly(self, **kwargs): # pragma: no cover
+    def plotly(self, **kwargs):  # pragma: no cover
         fig = px.line(self._obj, **kwargs)
         fig.update_layout(
             title="Performance on 1$",

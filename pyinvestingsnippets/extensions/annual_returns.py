@@ -44,7 +44,7 @@ class AnnualReturns:
             ax.legend(loc="best")
 
         ax.yaxis.set_major_formatter(mtick.PercentFormatter())
-        yearly_dates = [i for i in self._obj.index.strftime("%Y")]
+        yearly_dates = [i for i in self._obj.index]
         ax.set_xticklabels(yearly_dates, fontsize="small")
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
         ax.tick_params(axis='x', labelrotation=45)
