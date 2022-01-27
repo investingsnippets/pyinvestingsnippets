@@ -4,7 +4,6 @@ import matplotlib.gridspec as gridspec
 
 import datetime
 
-import matplotlib.pyplot as plt
 import pandas_datareader as web
 
 import sys, os
