@@ -11,7 +11,7 @@ def test_annualized():
     values = tu.get_truncated_normal(mean=0.001, sd=2, low=-0.01, upp=0.01)
     returns = pd.Series(data=values.rvs(number_of_values), index=index_range)
     # We do a trick here where from a plain object filled with returns
-    # we construct a ealth index which simulates prices :)
+    # we construct a wealth index which simulates prices :)
     prices = returns.wealth_index.data
     annualized_rets = prices.returns.annualized(252)
     assert annualized_rets is not None
@@ -20,3 +20,8 @@ def test_annualized():
     annualized_vol = prices.returns.volatility_annualized(252)
     assert annualized_vol is not None
     assert isinstance(annualized_vol, float)
+
+def test_var():
+    prices = tu.gbm(10, 1, steps_per_year=252)
+    var = prices.returns.var()
+    cvar = prices.returns.cvar()
