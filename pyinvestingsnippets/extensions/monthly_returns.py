@@ -10,7 +10,9 @@ class MonthlyReturns:
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = pandas_obj.fillna(method="pad").resample("M").last().pct_change().dropna()
+        self._obj = (
+            pandas_obj.fillna(method="pad").resample("M").last().pct_change().dropna()
+        )
 
     @staticmethod
     def _validate(obj):
