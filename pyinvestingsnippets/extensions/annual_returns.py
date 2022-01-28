@@ -23,6 +23,10 @@ class AnnualReturns:
         return self._obj - other.data
 
     @property
+    def wealth_index(self):
+        return self._obj.wealth_index
+
+    @property
     def annualized(self):
         """Returns the annualized return."""
         comp_growth = (1 + self._obj).prod()

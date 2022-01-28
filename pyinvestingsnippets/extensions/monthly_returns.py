@@ -24,6 +24,10 @@ class MonthlyReturns:
         return self._obj - other.data
 
     @property
+    def wealth_index(self):
+        return self._obj.wealth_index
+
+    @property
     def srri(self):
         return self._obj.srri
 
