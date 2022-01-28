@@ -23,6 +23,9 @@ class Returns:
     def data(self):
         return self._obj
 
+    def __sub__(self, other):
+        return self._obj - other.data
+
     @property
     def wealth_index(self):
         return self._obj.wealth_index
@@ -73,6 +76,25 @@ class Returns:
         """
         is_beyond = self._obj <= -self.var(percentile=percentile)
         return -self._obj[is_beyond].mean()
+
+    def sharpe(self, risk_free_rate, periods=252):
+        """The Sharpe ratio is the average return earned in excess
+        of the risk-free rate per unit of volatility.
+
+        Parameters
+        ----------
+        risk_free_rate: The Risk Free Rate
+
+        Returns
+        -------
+        float
+        """
+        rf_per_period = (1 + risk_free_rate) ** (1 / periods) - 1
+        excess_ret = self.data - rf_per_period
+        comp_growth = (1 + excess_ret).prod()
+        ann_ex_ret = comp_growth ** (periods / excess_ret.shape[0]) - 1
+        ann_vol = self.data.std() * (periods ** 0.5)
+        return ann_ex_ret / ann_vol
 
     @property
     def srri(self):

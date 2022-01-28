@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
@@ -16,6 +17,9 @@ class WeeklyReturns:
     @property
     def data(self):
         return self._obj
+
+    def __sub__(self, other):
+        return self._obj - other.data
 
     @property
     def srri(self):
@@ -35,6 +39,55 @@ class WeeklyReturns:
     def volatility_annualized(self):
         """Returns the annualized volatility."""
         return self._obj.std() * (52 ** 0.5)
+
+    def var(self, percentile=5):
+        """Returns the historic Value at Risk (VaR) at a specified level
+
+        Parameters
+        ----------
+        percentile: percentile or sequence of percentiles to compute,
+                    which must be between 0 and 100 inclusive.
+
+        Returns
+        -------
+        float
+        """
+        return -np.percentile(self._obj, percentile)
+
+    def cvar(self, percentile=5):
+        """Returns the Conditional VaR at a specified level
+
+        Parameters
+        ----------
+        percentile: percentile or sequence of percentiles to compute,
+                    which must be between 0 and 100 inclusive.
+
+        Returns
+        -------
+        float
+        """
+        is_beyond = self._obj <= -self.var(percentile=percentile)
+        return -self._obj[is_beyond].mean()
+
+    def sharpe(self, risk_free_rate):
+        """The Sharpe ratio is the average return earned in excess
+        of the risk-free rate per unit of volatility.
+
+        Parameters
+        ----------
+        risk_free_rate: The Risk Free Rate
+
+        Returns
+        -------
+        float
+        """
+        periods = 52
+        rf_per_period = (1 + risk_free_rate) ** (1 / periods) - 1
+        excess_ret = self.data - rf_per_period
+        comp_growth = (1 + excess_ret).prod()
+        ann_ex_ret = comp_growth ** (periods / excess_ret.shape[0]) - 1
+        ann_vol = self.data.std() * (periods ** 0.5)
+        return ann_ex_ret / ann_vol
 
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:

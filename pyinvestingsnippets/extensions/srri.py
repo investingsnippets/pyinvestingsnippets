@@ -41,8 +41,11 @@ class SRRI:
     @staticmethod
     def _validate(obj: pd.Series):
         assert isinstance(obj, pd.Series)
-        # 5 years of weekly returns data (5 * 52) or 5 * 12 monthly
-        assert obj.shape[0] in [260, 60]
+        assert obj.shape[0] in [
+            260,
+            60,
+        ], "Please provide 5 years of weekly \
+            returns data (5 * 52) or 5 * 12 monthly returns"
 
     @property
     def value(self) -> pd.Series:
