@@ -27,6 +27,20 @@ def tracking_error(r_a, r_b):
     """
     return np.sqrt(((r_a - r_b)**2).sum())
 
+def information_ratio(returns, benchmark_returns, periods=252):
+    """It measures a trader’s ability to generate excess returns relative to a benchmark."""
+    return_difference = returns.annualized(periods) - benchmark_returns.annualized(periods)
+    volatility = (returns - benchmark_returns).std() * (periods ** 0.5)
+    information_ratio = return_difference.mean() / volatility
+    return information_ratio
+
+def modigliani_ratio(returns, benchmark_returns, rf, periods=252):
+    """The Modigliani ratio (M2) measures the returns of the portfolio,
+    adjusted for the risk of the portfolio relative to that of some benchmark."""
+    sharpe_ratio = returns.sharpe(rf, periods)
+    benchmark_volatility = benchmark_returns.volatility_annualized(periods)
+    m2_ratio = (sharpe_ratio * benchmark_volatility) + rf
+    return m2_ratio
 
 def blank_fig():
     fig = go.Figure(go.Scatter(x=[], y = []))
@@ -244,7 +258,7 @@ def collect_params(n_clicks, dropdown_tickers_value, dropdown_benchmark_value, r
         raise PreventUpdate
     
     end_date = datetime.datetime.now()
-    start_date = end_date - datetime.timedelta(days=5*365)
+    start_date = end_date - datetime.timedelta(days=radio_years_value*365)
     end_date_frmt = end_date.strftime("%Y-%m-%d")
     start_date_frmt = start_date.strftime("%Y-%m-%d")
 
@@ -271,8 +285,9 @@ def collect_params(n_clicks, dropdown_tickers_value, dropdown_benchmark_value, r
     return {
         'dropdown_tickers_value': dropdown_tickers_value,
         'dropdown_benchmark_value': dropdown_benchmark_value,
-        'radio_years_value': radio_years_value,
-        'radio_rolling_window_value': radio_rolling_window_value,
+        'years': radio_years_value,
+        'rolling_window_value': radio_rolling_window_value,
+        'risk_free_rate': 0.03,
         'downloaded': True
     }
 
@@ -363,12 +378,12 @@ def update_graph_rolling_rets(data):
 
     rolling_rets_figures = []
 
-    fig_bench_r = pyinvestingsnippets.RollingReturns(benchmark_price['price'].prices.returns.data, rolling_window=data['radio_rolling_window_value']).plotly()
+    fig_bench_r = pyinvestingsnippets.RollingReturns(benchmark_price['price'].prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
     fig_bench_r.update_traces(line_color=benchmark_price['color'], line_width=1)
     rolling_rets_figures.append(fig_bench_r)
 
     for asset in asset_prices:
-        fig1_r = pyinvestingsnippets.RollingReturns(asset['price'].prices.returns.data, rolling_window=data['radio_rolling_window_value']).plotly()
+        fig1_r = pyinvestingsnippets.RollingReturns(asset['price'].prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
         fig1_r.update_traces(line_color=asset['color'], line_width=1)
         rolling_rets_figures.append(fig1_r)
 
@@ -390,12 +405,12 @@ def update_graph_rolling_vol(data):
 
     rolling_vol_figures = []
 
-    fig_bench_v = pyinvestingsnippets.RollingVolatility(benchmark_price['price'].prices.returns.data, rolling_window=data['radio_rolling_window_value'], window=252).plotly()
+    fig_bench_v = pyinvestingsnippets.RollingVolatility(benchmark_price['price'].prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
     fig_bench_v.update_traces(line_color=benchmark_price['color'], line_width=1)
     rolling_vol_figures.append(fig_bench_v)
 
     for asset in asset_prices:
-        fig1_v = pyinvestingsnippets.RollingVolatility(asset['price'].prices.returns.data, rolling_window=data['radio_rolling_window_value'], window=252).plotly()
+        fig1_v = pyinvestingsnippets.RollingVolatility(asset['price'].prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
         fig1_v.update_traces(line_color=asset['color'], line_width=1)
         rolling_vol_figures.append(fig1_v)
 
@@ -442,22 +457,38 @@ def update_graph_stats(data):
     if data is None:
         raise PreventUpdate
 
-    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'CAGR', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration']}]
+    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'Return Annualized', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset in asset_prices:
         asset_values = []
         asset_values.append(f"{asset['price'].prices.returns.wealth_index.total_return*100:.2f}%")
+        asset_values.append(f"{asset['price'].prices.returns.annualized(252)*100:.2f}%")
         asset_values.append(f"{asset['price'].prices.returns.wealth_index.cagr*100:.2f}%")
+        asset_values.append(f"{asset['price'].prices.returns.volatility_annualized(252)*100:.2f}%")
         asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.mean()}")
-        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.max()}")
+        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.mean().days} days")
+        asset_values.append(f"{asset['price'].prices.returns.wealth_index.drawdown.durations.max().days} days")
+        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(benchmark_price['price'].prices.returns.data, asset['price'].prices.returns.data).beta:.2f}")
+        asset_values.append(f"{tracking_error(asset['price'].prices.returns.data, benchmark_price['price'].prices.returns.data):.4f}")
+        asset_values.append(f"{asset['price'].prices.returns.sharpe(data['risk_free_rate'], 252):.2f}")
+        asset_values.append(f"{modigliani_ratio(asset['price'].prices.returns, benchmark_price['price'].prices.returns, data['risk_free_rate'], 252):.2f}")
+        asset_values.append(f"{information_ratio(asset['price'].prices.returns, benchmark_price['price'].prices.returns, 252):.2f}")
+        asset_values.append(f"{asset['price'].prices.monthly_returns.srri.risk_class}") if data['years'] >=5 else '-' 
         all_stats.append({'name':asset['ticker'], 'vals': asset_values})
     
     asset_values = []
     asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.total_return*100:.2f}%")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.annualized(252)*100:.2f}%")
     asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.cagr*100:.2f}%")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.volatility_annualized(252)*100:.2f}%")
     asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.mean()}")
-    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.max()}")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.mean().days} days")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.wealth_index.drawdown.durations.max().days} days")
+    asset_values.append(f"-")
+    asset_values.append(f"-")
+    asset_values.append(f"{benchmark_price['price'].prices.returns.sharpe(data['risk_free_rate'], 252):.2f}")
+    asset_values.append(f"-")
+    asset_values.append(f"-")
+    asset_values.append(f"{benchmark_price['price'].prices.monthly_returns.srri.risk_class}") if data['years'] >=5 else '-'
     all_stats.append({'name': benchmark_price['ticker'], 'vals': asset_values})
 
     fig = go.Figure(data=[go.Table(
