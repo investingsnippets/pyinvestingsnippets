@@ -5,7 +5,7 @@ import seaborn as sns
 
 
 @pd.api.extensions.register_series_accessor("log_returns")
-class Returns:
+class LogReturns:
     """Given a Prices Series, will build the logarithmic returns and
     attach several properties
     """
@@ -16,6 +16,7 @@ class Returns:
 
     @staticmethod
     def _validate(obj):
+        assert isinstance(obj, pd.Series)
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
@@ -23,8 +24,11 @@ class Returns:
         return self._obj
 
     @property
-    def srri(self):
-        return self._obj.srri
+    def cumulative(self):
+        """Returs the cumulative return on an investment.
+        It is the aggregate amount that the investment has gained
+        or lost over time, independent of the amount of time involved."""
+        return np.expm1(self._obj.sum())
 
     def plot(self):  # pragma: no cover
         gridkw = dict(height_ratios=[5, 1])

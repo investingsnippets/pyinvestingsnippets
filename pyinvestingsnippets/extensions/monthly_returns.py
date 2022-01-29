@@ -6,7 +6,10 @@ import matplotlib.ticker as mtick
 
 @pd.api.extensions.register_series_accessor("monthly_returns")
 class MonthlyReturns:
-    """Given Prices it calculates the arithmentic Returns"""
+    """Given a Prices Series of daily prices, will resampe them
+    on monthly basis and get the last price of the year. Will then
+    build the Arithmentic Returns and attach several properties
+    """
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)

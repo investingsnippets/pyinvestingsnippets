@@ -1,1 +1,1 @@
-import pyinvestingsnippets
+import pyinvestingsnippets  # Use that to bind the extensions

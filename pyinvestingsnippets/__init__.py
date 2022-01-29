@@ -8,6 +8,7 @@ from .extensions.annual_returns import AnnualReturns
 from .extensions.weekly_returns import WeeklyReturns
 from .extensions.prices import Prices
 from .extensions.returns import Returns
+from .extensions.log_returns import LogReturns
 from .extensions.srri import SRRI
 
 from .utilities.rolling_returns import RollingReturns
@@ -31,6 +32,7 @@ __all__ = [
     "WeeklyReturns",
     "AnnualReturns",
     "Returns",
+    "LogReturns",
     "RollingReturns",
     "RollingVolatility",
     "BetaCovariance",

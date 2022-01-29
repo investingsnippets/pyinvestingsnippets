@@ -30,6 +30,13 @@ class Returns:
     def wealth_index(self):
         return self._obj.wealth_index
 
+    @property
+    def cumulative(self):
+        """Returs the cumulative return on an investment.
+        It is the aggregate amount that the investment has gained
+        or lost over time, independent of the amount of time involved."""
+        return (1 + self._obj).prod() - 1
+
     def wealth_index_since(self, since=None):
         return self._obj[since:].wealth_index
 
