@@ -25,3 +25,8 @@ def test_var():
     prices = tu.gbm(10, 1, steps_per_year=252)
     var = prices.returns.var()
     cvar = prices.returns.cvar()
+
+def test_cumulative_return():
+    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=5, freq='D')
+    prices = pd.Series(data=[100, 90, 113, 120, 130], index=index_range)
+    assert round(prices.returns.cumulative, 2) == 0.30

@@ -6,8 +6,8 @@ import plotly.express as px
 
 @pd.api.extensions.register_series_accessor("wealth_index")
 class WealthIndex:
-    """Given an Arithmetic Returns Series, will produce the
-    Wealth Index on 1 unit, and other helper stats
+    """Given Arithmetic Returns Series, will produce the
+    Wealth Index on 1 unit.
     """
 
     def __init__(self, pandas_obj: pd.Series):

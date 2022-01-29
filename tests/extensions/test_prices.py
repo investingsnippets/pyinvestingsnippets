@@ -20,3 +20,7 @@ def test_returns():
     assert prices.returns is not None
     assert returns['2000-01-03':].all() == prices.returns.data['2000-01-03':].all()
 
+def test_cumulative_return():
+    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=5, freq='D')
+    prices = pd.Series(data=[100, 90, 113, 120, 130], index=index_range)
+    assert round(prices.prices.cumulative_return, 2) == 0.30
