@@ -14,7 +14,11 @@ class WeeklyReturns:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = (
-            pandas_obj.fillna(method="pad").resample("W").last().pct_change().dropna()
+            pandas_obj.fillna(method="pad")
+            .resample("W", closed='left', label='left')
+            .last()
+            .pct_change()
+            .dropna()
         )
 
     @staticmethod
@@ -27,6 +31,10 @@ class WeeklyReturns:
 
     def __sub__(self, other):
         return self._obj - other.data
+
+    def __getitem__(self, idx):
+        self._obj = self._obj.loc[idx]
+        return self
 
     @property
     def wealth_index(self):
