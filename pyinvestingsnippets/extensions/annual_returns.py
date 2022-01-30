@@ -14,7 +14,11 @@ class AnnualReturns:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = (
-            pandas_obj.fillna(method="pad").resample("Y").last().pct_change().dropna()
+            pandas_obj.fillna(method="pad")
+            .resample("Y", closed='left', label='left')
+            .last()
+            .pct_change()
+            .dropna()
         )
         self._obj.index = self._obj.index.year
 
@@ -28,6 +32,10 @@ class AnnualReturns:
 
     def __sub__(self, other):
         return self._obj - other.data
+
+    def __getitem__(self, idx):
+        self._obj = self._obj.loc[idx]
+        return self
 
     @property
     def wealth_index(self):

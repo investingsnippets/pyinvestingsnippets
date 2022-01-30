@@ -23,6 +23,10 @@ class WealthIndex:
     def data(self) -> pd.Series:
         return self._obj
 
+    def __getitem__(self, idx):
+        self._obj = self._obj.loc[idx]
+        return self
+
     @property
     def drawdown(self):
         return self._obj.drawdown

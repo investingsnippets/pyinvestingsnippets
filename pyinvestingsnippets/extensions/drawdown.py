@@ -29,8 +29,11 @@ class Drawdown:
         pd.Series
             The Drawdown series
         """
-
         return self._obj
+
+    def __getitem__(self, idx):
+        self._obj = self._obj.loc[idx]
+        return self
 
     @property
     def max_drawdown(self):

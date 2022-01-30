@@ -23,6 +23,10 @@ class LogReturns:
     def data(self):
         return self._obj
 
+    def __getitem__(self, idx):
+        self._obj = self._obj.loc[idx]
+        return self
+
     @property
     def cumulative(self):
         """Returs the cumulative return on an investment.
