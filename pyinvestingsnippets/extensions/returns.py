@@ -30,6 +30,14 @@ class Returns:
         self._obj = self._obj.loc[idx]
         return self
 
+    def tail(self, number):
+        self._obj = self._obj.tail(number)
+        return self
+
+    def head(self, number):
+        self._obj = self._obj.head(number)
+        return self
+
     @property
     def wealth_index(self):
         return self._obj.wealth_index
