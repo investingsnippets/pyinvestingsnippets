@@ -30,7 +30,7 @@ def tracking_error(r_a, r_b):
     return np.sqrt(((r_a - r_b)**2).sum())
 
 def information_ratio(returns, benchmark_returns, periods=252):
-    """It measures a trader’s ability to generate excess returns relative to a benchmark."""
+    """It measures a trader's ability to generate excess returns relative to a benchmark."""
     return_difference = returns.annualized(periods) - benchmark_returns.annualized(periods)
     volatility = (returns - benchmark_returns).std() * (periods ** 0.5)
     information_ratio = return_difference.mean() / volatility
@@ -54,13 +54,10 @@ def blank_fig():
 
 def gbm(n_years = 10, n_scenarios=1000, mu=0.07, sigma=0.15, steps_per_year=12, s_0=100.0, prices=True):
     """
-    Geometric Brownian Motion
+    Generates finctional stock prices based on Geometric Brownian Motion
     """
     dt = 1/steps_per_year
     n_steps = int(n_years*steps_per_year) + 1
-    # the standard way ...
-    # rets_plus_1 = np.random.normal(loc=mu*dt+1, scale=sigma*np.sqrt(dt), size=(n_steps, n_scenarios))
-    # without discretization error ...
     rets_plus_1 = np.random.normal(loc=(1+mu)**dt, scale=(sigma*np.sqrt(dt)), size=(n_steps, n_scenarios))
     rets_plus_1[0] = 1
     ret_val = s_0*pd.DataFrame(rets_plus_1).cumprod() if prices else rets_plus_1-1
@@ -329,7 +326,7 @@ def update_wi(data):
     wi_figures = []
 
     for asset_name in prices.columns:
-        fig_wi_asset = prices[asset_name].prices.returns.wealth_index.plotly()
+        fig_wi_asset = prices[asset_name].returns.wealth_index.plotly()
         fig_wi_asset.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
         wi_figures.append(fig_wi_asset)
 
@@ -360,7 +357,7 @@ def update_dd(data):
     dd_figures = []
 
     for asset_name in prices.columns:
-        fig1 = prices[asset_name].prices.returns.wealth_index.drawdown.plotly()
+        fig1 = prices[asset_name].returns.wealth_index.drawdown.plotly()
         fig1.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
         dd_figures.append(fig1)
 
@@ -392,7 +389,7 @@ def update_arets(data):
 
     ann_rets = pd.DataFrame()
     for asset_name in prices.columns:
-        ann_rets = pd.concat([ann_rets, prices[asset_name].prices.returns.wealth_index.annual_returns.data], axis=1)
+        ann_rets = pd.concat([ann_rets, prices[asset_name].annual_returns.data], axis=1)
     ann_rets = ann_rets.dropna(how='all')
 
     ann_rets_fig = px.bar(ann_rets, barmode="group", color_discrete_map=data['asset_colors'])
@@ -425,7 +422,7 @@ def update_graph_rolling_rets(data):
     rolling_rets_figures = []
 
     for asset_name in prices.columns:
-        fig1_r = pyinvestingsnippets.RollingReturns(prices[asset_name].prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
+        fig1_r = pyinvestingsnippets.RollingReturns(prices[asset_name].returns.data, rolling_window=data['rolling_window_value']).plotly()
         fig1_r.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
         rolling_rets_figures.append(fig1_r)
 
@@ -456,7 +453,7 @@ def update_graph_rolling_vol(data):
     rolling_vol_figures = []
 
     for asset_name in prices.columns:
-        fig1_v = pyinvestingsnippets.RollingVolatility(prices[asset_name].prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
+        fig1_v = pyinvestingsnippets.RollingVolatility(prices[asset_name].returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
         fig1_v.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
         rolling_vol_figures.append(fig1_v)
 
@@ -488,8 +485,8 @@ def update_graph_risk_reward(data):
 
     all_values = pd.DataFrame()
     for asset_name in prices.columns:
-        ann_vol = prices[asset_name].prices.returns.volatility_annualized(252)
-        ann_ret = prices[asset_name].prices.returns.annualized(ppy=252)
+        ann_vol = prices[asset_name].returns.volatility_annualized(252)
+        ann_ret = prices[asset_name].returns.annualized(ppy=252)
         all_values = pd.concat([all_values, pd.DataFrame({'Name': asset_name, 'Risk': ann_vol, 'Return': ann_ret, 'Color': data['asset_colors'][asset_name]}, index=[asset_name])], axis=0)
 
     fig = px.scatter(all_values, x='Risk', y='Return', hover_data=['Name'], color="Name", color_discrete_map=data['asset_colors'])
@@ -524,19 +521,19 @@ def update_graph_stats(data):
     all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'Return Annualized', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset_name in prices.columns:
         asset_values = []
-        asset_values.append(f"{prices[asset_name].prices.returns.wealth_index.total_return*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].prices.returns.annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].prices.returns.wealth_index.cagr*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].prices.returns.volatility_annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].prices.returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].prices.returns.wealth_index.drawdown.durations.mean().days} days")
-        asset_values.append(f"{prices[asset_name].prices.returns.wealth_index.drawdown.durations.max().days} days")
-        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].prices.returns.data, prices[asset_name].prices.returns.data).beta:.2f}")
-        asset_values.append(f"{tracking_error(prices[asset_name].prices.returns.data, prices.iloc[: , -1].prices.returns.data):.4f}")
-        asset_values.append(f"{prices[asset_name].prices.returns.sharpe(data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{modigliani_ratio(prices[asset_name].prices.returns, prices.iloc[: , -1].prices.returns, data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{information_ratio(prices[asset_name].prices.returns, prices.iloc[: , -1].prices.returns, 252):.2f}")
-        asset_values.append(f"{prices[asset_name].prices.monthly_returns.srri.risk_class}") if data['years'] >=5 else '-' 
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.total_return*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.cagr*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean().days} days")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max().days} days")
+        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2f}")
+        asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
+        asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
+        asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
+        asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
+        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if data['years'] >=5 else '-' 
         all_stats.append({'name':asset_name, 'vals': asset_values})
 
     fig = go.Figure(data=[go.Table(
