@@ -30,20 +30,9 @@ Example
 
 Here is a simple example ::
 
-   from yahoofinancials import YahooFinancials
    import datetime
    import pyinvestingsnippets
-
-   def retrieve_stock_data(ticker, start, end):
-         json = YahooFinancials(ticker).get_historical_price_data(start, end, "daily")
-         columns=["adjclose"]  # ["open","close","adjclose"]
-         df = pd.DataFrame(columns=columns)
-         for row in json[ticker]["prices"]:
-               d = dateutil.parser.isoparse(row["formatted_date"])
-               df.loc[d] = [row["adjclose"]] # [row["open"], row["close"], row["adjclose"]]
-         df.index.name = "date"
-         df.columns = [ticker]
-         return df
+   import pandas_datareader as web
 
    if __name__ == "__main__":
       end_date = datetime.datetime.now()
@@ -51,8 +40,9 @@ Here is a simple example ::
       end_date_frmt = end_date.strftime("%Y-%m-%d")
       start_date_frmt = start_date.strftime("%Y-%m-%d")
 
-      aapl_prices = retrieve_stock_data('AAPL', start_date_frmt, end_date_frmt)
-      aapl_rets = aapl_prices['AAPL'].prices.returns
+      aapl_prices = web.DataReader('AAPL', data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
+
+      aapl_rets = aapl_prices['AAPL'].returns
 
       aapl_wi = aapl_rets.wealth_index
       aapl_dd = aapl_wi.drawdown
