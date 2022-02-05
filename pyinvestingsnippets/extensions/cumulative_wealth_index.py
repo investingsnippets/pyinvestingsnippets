@@ -5,9 +5,9 @@ import plotly.express as px
 
 
 @pd.api.extensions.register_series_accessor("wealth_index")
-class WealthIndex:
+class CumulativeWealthIndex:
     """Given Arithmetic Returns Series, will produce the
-    Wealth Index on 1 unit.
+    Cumulative Wealth Index on 1$.
     """
 
     def __init__(self, pandas_obj: pd.Series):
@@ -21,6 +21,9 @@ class WealthIndex:
 
     @property
     def data(self) -> pd.Series:
+        return self._obj
+
+    def __call__(self):
         return self._obj
 
     def __getitem__(self, idx):

@@ -19,6 +19,9 @@ class Prices:
     def data(self):
         return self._obj
 
+    def __call__(self):
+        return self._obj
+
     def __getitem__(self, idx):
         return self._obj.loc[idx]
 
