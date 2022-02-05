@@ -17,8 +17,7 @@ class AnnualReturns:
             pandas_obj.fillna(method="pad")
             .resample("Y", closed='left', label='left')
             .last()
-            .pct_change()
-            .dropna()
+            .pct_change()[1:]
         )
         self._obj.index = self._obj.index.year
 
@@ -34,16 +33,13 @@ class AnnualReturns:
         return self._obj - other.data
 
     def __getitem__(self, idx):
-        self._obj = self._obj.loc[idx]
-        return self
+        return self._obj.loc[idx]
 
     def tail(self, number):
-        self._obj = self._obj.tail(number)
-        return self
+        return self._obj.tail(number)
 
     def head(self, number):
-        self._obj = self._obj.head(number)
-        return self
+        return self._obj.head(number)
 
     @property
     def wealth_index(self):
