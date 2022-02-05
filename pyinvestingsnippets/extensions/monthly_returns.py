@@ -7,7 +7,7 @@ import matplotlib.ticker as mtick
 @pd.api.extensions.register_series_accessor("monthly_returns")
 class MonthlyReturns:
     """Given a Prices Series of daily prices, will resampe them
-    on monthly basis and get the last price of the year. Will then
+    on monthly basis and get the last price of the month. Will then
     build the Arithmentic Returns and attach several properties
     """
 
