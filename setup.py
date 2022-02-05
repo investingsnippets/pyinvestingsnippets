@@ -35,9 +35,9 @@ setup(
     python_requires='>=3.7',
     install_requires=requirements(filename='requirements.txt'),
     setup_requires=['pytest-runner', 'flake8'],
-    tests_require=requirements(filename='requirements-dev.txt'),
+    tests_require=requirements(filename='requirements-test.txt'),
     extras_require={
-        'tests':requirements(filename='requirements-dev.txt')
+        'tests':requirements(filename='requirements-test.txt')
     },
     zip_safe=False,
     entry_points={
