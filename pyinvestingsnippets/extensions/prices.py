@@ -30,26 +30,6 @@ class Prices:
         or lost over time, independent of the amount of time involved."""
         return (self._obj.iloc[-1] - self._obj.iloc[0]) / self._obj.iloc[0]
 
-    @property
-    def returns(self):
-        return self._obj.returns
-
-    @property
-    def log_returns(self):
-        return self._obj.log_returns
-
-    @property
-    def weekly_returns(self):
-        return self._obj.weekly_returns
-
-    @property
-    def monthly_returns(self):
-        return self._obj.monthly_returns
-
-    @property
-    def annual_returns(self):
-        return self._obj.annual_returns
-
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:
             ax = plt.gca()

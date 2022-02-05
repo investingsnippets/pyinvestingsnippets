@@ -38,8 +38,8 @@ ax_downside_risk = plt.subplot(gs[3, 4:])
 ax_stats = plt.subplot(gs[4, :3])
 ax_beta = plt.subplot(gs[4, 3:])
 
-asset1_rets = asset1_prices.prices.returns
-asset2_rets = asset2_prices.prices.returns
+asset1_rets = asset1_prices.returns
+asset2_rets = asset2_prices.returns
 
 asset1_wi = asset1_rets.wealth_index
 asset1_dd = asset1_wi.drawdown
@@ -88,10 +88,10 @@ def _plot_stats(ax=None, **kwargs):
         ['Max Drawdown', '{:.2%}'.format(asset1_dd.max_drawdown), '{:.2%}'.format(asset2_dd.max_drawdown)],
         ['Avg Drawdown Duration', asset1_dd_dur.mean(), asset2_dd_dur.mean()],
         ['Max Drawdown Duration', asset1_dd_dur.max(), asset2_dd_dur.max()],
-        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.prices.monthly_returns.srri.risk_class,
-                    asset1_prices.prices.monthly_returns.srri.value),
-                '{}/7 ({:.2%})'.format(asset2_prices.prices.monthly_returns.srri.risk_class,
-                    asset2_prices.prices.monthly_returns.srri.value)],
+        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.monthly_returns.srri.risk_class,
+                    asset1_prices.monthly_returns.srri.value),
+                '{}/7 ({:.2%})'.format(asset2_prices.monthly_returns.srri.risk_class,
+                    asset2_prices.monthly_returns.srri.value)],
         ['Beta', '{:.2}'.format(beta.beta), '1']
     ]
     column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
