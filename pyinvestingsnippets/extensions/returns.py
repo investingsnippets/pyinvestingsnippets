@@ -23,6 +23,9 @@ class Returns:
     def data(self):
         return self._obj
 
+    def __call__(self):
+        return self._obj
+
     def __sub__(self, other):
         return self._obj - other.data
 
