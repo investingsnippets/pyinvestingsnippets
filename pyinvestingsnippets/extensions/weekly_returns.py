@@ -7,7 +7,7 @@ import matplotlib.ticker as mtick
 @pd.api.extensions.register_series_accessor("weekly_returns")
 class WeeklyReturns:
     """Given a Prices Series of daily prices, will resampe them
-    on weekly basis and get the last price of the year. Will then
+    on weekly basis and get the last price of the week. Will then
     build the Arithmentic Returns and attach several properties
     """
 
