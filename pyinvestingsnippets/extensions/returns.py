@@ -12,7 +12,7 @@ class Returns:
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = pandas_obj.fillna(method="pad").pct_change().dropna()
+        self._obj = pandas_obj.fillna(method="pad").pct_change()[1:]
 
     @staticmethod
     def _validate(obj):
@@ -27,24 +27,21 @@ class Returns:
         return self._obj - other.data
 
     def __getitem__(self, idx):
-        self._obj = self._obj.loc[idx]
-        return self
+        return self._obj.loc[idx]
 
     def tail(self, number):
-        self._obj = self._obj.tail(number)
-        return self
+        return self._obj.tail(number)
 
     def head(self, number):
-        self._obj = self._obj.head(number)
-        return self
+        return self._obj.head(number)
 
     @property
     def wealth_index(self):
         return self._obj.wealth_index
 
     @property
-    def cumulative(self):
-        """Returs the cumulative return on an investment.
+    def total(self):
+        """Returns the total return on an investment.
         It is the aggregate amount that the investment has gained
         or lost over time, independent of the amount of time involved."""
         return (1 + self._obj).prod() - 1

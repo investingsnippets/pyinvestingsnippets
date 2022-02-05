@@ -24,12 +24,11 @@ class LogReturns:
         return self._obj
 
     def __getitem__(self, idx):
-        self._obj = self._obj.loc[idx]
-        return self
+        return self._obj.loc[idx]
 
     @property
-    def cumulative(self):
-        """Returs the cumulative return on an investment.
+    def total(self):
+        """Returss the total return on an investment.
         It is the aggregate amount that the investment has gained
         or lost over time, independent of the amount of time involved."""
         return np.expm1(self._obj.sum())
