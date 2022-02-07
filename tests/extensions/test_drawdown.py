@@ -29,9 +29,6 @@ def test_durations():
     index_range = pd.date_range(start=datetime(2000, 1, 1), periods=9, freq='AS-JAN')
     wealth_index = pd.Series(data=[0.4, 0.3, 0.2, 0.5, 0.4, 0.4, 0.3, 0.3, 0.5], index=index_range) 
     durations = wealth_index.drawdown.durations
-    assert isinstance(durations, pd.Series)
-    assert durations.dtypes == 'timedelta64[ns]'
-    assert durations.name == 'Durations'
-    assert len(durations) == 2
+    assert len(durations.data) == 2
     assert durations['2003-01-01'] == timedelta(days=1096)
     assert durations['2008-01-01'] == timedelta(days=1826)

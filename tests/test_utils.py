@@ -12,7 +12,7 @@ class TestUtlis:
     
     def gbm(n_years = 10, n_scenarios=1000, mu=0.07, sigma=0.15, steps_per_year=12, s_0=100.0, prices=True):
         """
-        Geometric Brownian Motion
+        Generates finctional stock prices based on Geometric Brownian Motion
         """
         dt = 1/steps_per_year
         n_steps = int(n_years*steps_per_year) + 1

@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("wealth_index")
+@register_series_accessor("wealth_index")
+@register_dataframe_accessor("wealth_index")
 class CumulativeWealthIndex:
     """Given Arithmetic Returns Series, will produce the
     Cumulative Wealth Index on 1$.

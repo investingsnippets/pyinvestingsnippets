@@ -1,8 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("prices")
+@register_series_accessor("prices")
+@register_dataframe_accessor("prices")
 class Prices:
     """Given a Prices Series, will attach useful attributes"""
 
@@ -12,7 +14,6 @@ class Prices:
 
     @staticmethod
     def _validate(obj):
-        assert isinstance(obj, pd.Series)
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property

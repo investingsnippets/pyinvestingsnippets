@@ -86,14 +86,18 @@ def _plot_stats(ax=None, **kwargs):
         ['Total Return', '{:.0%}'.format(asset1_wi.total_return), '{:.0%}'.format(asset2_wi.total_return)],
         ['CAGR', '{:.2%}'.format(asset1_wi.cagr), '{:.2%}'.format(asset2_wi.cagr)],
         ['Max Drawdown', '{:.2%}'.format(asset1_dd.max_drawdown), '{:.2%}'.format(asset2_dd.max_drawdown)],
-        ['Avg Drawdown Duration', asset1_dd_dur.mean(), asset2_dd_dur.mean()],
-        ['Max Drawdown Duration', asset1_dd_dur.max(), asset2_dd_dur.max()],
-        ['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.monthly_returns.srri.risk_class,
-                    asset1_prices.monthly_returns.srri.value),
-                '{}/7 ({:.2%})'.format(asset2_prices.monthly_returns.srri.risk_class,
-                    asset2_prices.monthly_returns.srri.value)],
+        ['Avg Drawdown Duration', asset1_dd_dur.mean, asset2_dd_dur.mean],
+        ['Max Drawdown Duration', asset1_dd_dur.max, asset2_dd_dur.max],
         ['Beta', '{:.2}'.format(beta.beta), '1']
     ]
+
+    if asset1_prices.monthly_returns.data.shape[0] >= 60 and \
+        asset2_prices.monthly_returns.data.shape[0] >= 60:
+        data.append(['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.monthly_returns.srri.risk_class,
+                    asset1_prices.monthly_returns.srri.value),
+                '{}/7 ({:.2%})'.format(asset2_prices.monthly_returns.srri.risk_class,
+                    asset2_prices.monthly_returns.srri.value)])
+
     column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
     ax.axis('tight')
     ax.axis('off')

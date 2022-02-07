@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("monthly_returns")
+@register_series_accessor("monthly_returns")
+@register_dataframe_accessor("monthly_returns")
 class MonthlyReturns:
     """Given a Prices Series of daily prices, will resampe them
     on monthly basis and get the last price of the month. Will then
@@ -49,7 +51,11 @@ class MonthlyReturns:
 
     @property
     def srri(self):
-        return self._obj.srri
+        assert (
+            self._obj.shape[0] >= 60
+        ), "Please provide 5 years \
+of monthly returns (5 * 12)"
+        return self._obj.iloc[-60:].srri
 
     @property
     def positive_monthly_returns_percentage(self):
