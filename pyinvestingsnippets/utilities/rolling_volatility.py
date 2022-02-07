@@ -21,7 +21,7 @@ class RollingVolatility:
     if monthly returns then window = 12 for annualization
     """
 
-    def __init__(self, pandas_obj: pd.Series, rolling_window: int, window: int = 252):
+    def __init__(self, pandas_obj, rolling_window: int, window: int = 252):
         self._validate(pandas_obj, rolling_window, window)
         self.rolling_window = rolling_window
         self._obj = (
@@ -32,7 +32,7 @@ class RollingVolatility:
         )
 
     @staticmethod
-    def _validate(obj: pd.Series, rolling_window: int, window: int):
+    def _validate(obj, rolling_window: int, window: int):
         assert isinstance(obj.index, pd.DatetimeIndex)
         assert rolling_window > 0 and isinstance(
             rolling_window, int
@@ -42,7 +42,7 @@ class RollingVolatility:
         ), "rolling_window must be possitive integer"
 
     @property
-    def data(self) -> pd.Series:
+    def data(self):
         return self._obj
 
     def plot(self, ax=None, **kwargs):  # pragma: no cover

@@ -22,14 +22,6 @@ class Drawdown:
 
     @property
     def data(self):
-        """
-        Returns the pandas Series with Drawdown calculated.
-
-        Returns
-        -------
-        pd.Series
-            The Drawdown series
-        """
         return self._obj
 
     def __call__(self):
