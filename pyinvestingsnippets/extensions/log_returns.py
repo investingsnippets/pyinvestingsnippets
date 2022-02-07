@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("log_returns")
+@register_series_accessor("log_returns")
+@register_dataframe_accessor("log_returns")
 class LogReturns:
     """Given a Prices Series, will build the logarithmic returns and
     attach several properties
@@ -16,7 +18,6 @@ class LogReturns:
 
     @staticmethod
     def _validate(obj):
-        assert isinstance(obj, pd.Series)
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property

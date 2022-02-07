@@ -42,14 +42,14 @@ class RollingReturns:
         ax.xaxis.set_tick_params(reset=True)
         ax.tick_params(axis='x', labelrotation=45)
 
-        ax.axhline(
-            y=(to_plot.mean()),
-            color="red",
-            ls="--",
-            lw=0.5,
-            label=f"Avg ({to_plot.mean():0.2f}%)",
-        )
-        ax.axhline(y=0, color="black", lw=0.5)
+        # ax.axhline(
+        #     y=(to_plot.mean()),
+        #     color="red",
+        #     ls="--",
+        #     lw=0.5,
+        #     label=f"Avg ({to_plot.mean():0.2f}%)",
+        # )
+        # ax.axhline(y=0, color="black", lw=0.5)
         if 'label' in kwargs:
             ax.legend(loc="best")
 

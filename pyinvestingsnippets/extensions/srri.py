@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
+from pandas.api.extensions import register_series_accessor
 
 
-@pd.api.extensions.register_series_accessor("srri")
+@register_series_accessor("srri")
 class SRRI:
     """
     Synthetic Risk and Reward Indicator (Standard Deviation over 5 Years)
@@ -45,7 +46,7 @@ class SRRI:
             260,
             60,
         ], "Please provide 5 years of weekly \
-            returns data (5 * 52) or 5 * 12 monthly returns"
+returns data (5 * 52) or 5 * 12 monthly returns"
 
     @property
     def value(self) -> pd.Series:

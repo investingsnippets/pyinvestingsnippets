@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("annual_returns")
+@register_series_accessor("annual_returns")
+@register_dataframe_accessor("annual_returns")
 class AnnualReturns:
     """Given a Prices Series of daily prices, will resampe them
     on yearly basis and get the last price of the year. Will then

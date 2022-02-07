@@ -2,6 +2,7 @@
 # flake8: noqa
 """Python tools for stock analysis"""
 from .extensions.drawdown import Drawdown
+from .extensions.drawdown_durations import DrawdownDurations
 from .extensions.cumulative_wealth_index import CumulativeWealthIndex
 from .extensions.monthly_returns import MonthlyReturns
 from .extensions.annual_returns import AnnualReturns
@@ -25,6 +26,7 @@ from .utilities.beta_regression import BetaRegression
 __version__ = "2.0.0"
 __all__ = [
     "Drawdown",
+    "DrawdownDurations",
     "CumulativeWealthIndex",
     "Prices",
     "SRRI",

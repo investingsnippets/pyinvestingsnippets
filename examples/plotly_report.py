@@ -4,6 +4,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash.long_callback import DiskcacheLongCallbackManager
+from utils import gbm
 
 import plotly.graph_objects as go
 import plotly.express as px
@@ -50,18 +51,6 @@ def blank_fig():
     fig.update_xaxes(showgrid = False, showticklabels = False, zeroline=False)
     fig.update_yaxes(showgrid = False, showticklabels = False, zeroline=False)
     return fig
-
-
-def gbm(n_years = 10, n_scenarios=1000, mu=0.07, sigma=0.15, steps_per_year=12, s_0=100.0, prices=True):
-    """
-    Generates finctional stock prices based on Geometric Brownian Motion
-    """
-    dt = 1/steps_per_year
-    n_steps = int(n_years*steps_per_year) + 1
-    rets_plus_1 = np.random.normal(loc=(1+mu)**dt, scale=(sigma*np.sqrt(dt)), size=(n_steps, n_scenarios))
-    rets_plus_1[0] = 1
-    ret_val = s_0*pd.DataFrame(rets_plus_1).cumprod() if prices else rets_plus_1-1
-    return ret_val
 
 # the style arguments for the sidebar.
 SIDEBAR_STYLE = {
@@ -285,8 +274,7 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
     asset_colors = {}
     for i, asset in enumerate(dropdown_tickers_value):
         # asset_price = web.DataReader(asset, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
-        asset_price = gbm(10, 1, steps_per_year=252).iloc[:, 0] # gets the fist column of dataframe as series
-        asset_price.index = pd.bdate_range(end=datetime.datetime.now(), periods=asset_price.shape[0]) # generates a time index
+        asset_price = gbm(10, 1, steps_per_year=252).iloc[:, 0]  # gets first column
         
         asset_price.name = asset
         asset_price = asset_price.loc[start_date.strftime("%Y-%m-%d"):]
@@ -295,8 +283,7 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
         set_progress((str(i + 1), str(len(dropdown_tickers_value))))
 
     # bench_price = web.DataReader(dropdown_benchmark_value, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
-    bench_price = gbm(10, 1, steps_per_year=252).iloc[:, 0] # gets the fist column of dataframe as series
-    bench_price.index = pd.bdate_range(end=datetime.datetime.now(), periods=bench_price.shape[0]) # generates a time index
+    bench_price = gbm(10, 1, steps_per_year=252).iloc[:, 0]  # gets first column
     
     bench_price.name = dropdown_benchmark_value
     bench_price = bench_price.loc[start_date.strftime("%Y-%m-%d"):]
@@ -526,14 +513,14 @@ def update_graph_stats(data):
         asset_values.append(f"{prices[asset_name].returns.wealth_index.cagr*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean().days} days")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max().days} days")
-        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2f}")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean.days} days")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max.days} days")
+        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2}")
         asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
         asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
         asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
         asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
-        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if data['years'] >=5 else '-' 
+        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if prices[asset_name].monthly_returns.data.shape[0] >=60 else '-' 
         all_stats.append({'name':asset_name, 'vals': asset_values})
 
     fig = go.Figure(data=[go.Table(

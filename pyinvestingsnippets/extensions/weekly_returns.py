@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("weekly_returns")
+@register_series_accessor("weekly_returns")
+@register_dataframe_accessor("weekly_returns")
 class WeeklyReturns:
     """Given a Prices Series of daily prices, will resampe them
     on weekly basis and get the last price of the week. Will then
@@ -49,7 +51,11 @@ class WeeklyReturns:
 
     @property
     def srri(self):
-        return self._obj.srri
+        assert (
+            self._obj.shape[0] >= 260
+        ), "Please provide 5 years \
+of weekly returns (5 * 52)"
+        return self._obj.iloc[-260:].srri
 
     @property
     def positive_weekly_returns_percentage(self):

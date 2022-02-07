@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@pd.api.extensions.register_series_accessor("returns")
+@register_series_accessor("returns")
+@register_dataframe_accessor("returns")
 class Returns:
     """Given a Prices Series, will build the Arithmentic Returns and
     attach several properties
@@ -16,7 +18,7 @@ class Returns:
 
     @staticmethod
     def _validate(obj):
-        assert isinstance(obj, pd.Series)
+        # assert isinstance(obj, pd.Series)
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
