@@ -8,7 +8,7 @@ import plotly.express as px
 class RollingReturns:
     """Given a Returns Series, will build the rolling returns using window"""
 
-    def __init__(self, pandas_obj: pd.Series, rolling_window: int = 252):
+    def __init__(self, pandas_obj, rolling_window: int = 252):
         self._validate(pandas_obj, rolling_window)
         self.window = rolling_window
         self._obj = (1 + pandas_obj).rolling(window=rolling_window).apply(
@@ -16,7 +16,7 @@ class RollingReturns:
         ) - 1
 
     @staticmethod
-    def _validate(obj: pd.Series, rolling_window: int):
+    def _validate(obj, rolling_window: int):
         assert isinstance(obj.index, pd.DatetimeIndex)
         assert rolling_window > 0 and isinstance(
             rolling_window, int

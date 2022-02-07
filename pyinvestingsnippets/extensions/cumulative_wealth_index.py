@@ -12,17 +12,17 @@ class CumulativeWealthIndex:
     Cumulative Wealth Index on 1$.
     """
 
-    def __init__(self, pandas_obj: pd.Series):
+    def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = ((pandas_obj + 1).cumprod()) * 1
         self._obj.iloc[0] = 1
 
     @staticmethod
-    def _validate(obj: pd.Series):
+    def _validate(obj):
         assert isinstance(obj.index, pd.DatetimeIndex)
 
     @property
-    def data(self) -> pd.Series:
+    def data(self):
         return self._obj
 
     def __call__(self):
