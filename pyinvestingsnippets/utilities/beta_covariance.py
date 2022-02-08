@@ -21,8 +21,8 @@ class BetaCovariance:
 
     @staticmethod
     def _validate(independent_variable, dependent_variable):
-        assert isinstance(independent_variable, pd.DatetimeIndex)
-        assert isinstance(dependent_variable, pd.DatetimeIndex)
+        assert isinstance(independent_variable.index, pd.DatetimeIndex)
+        assert isinstance(dependent_variable.index, pd.DatetimeIndex)
 
     @property
     def beta(self):

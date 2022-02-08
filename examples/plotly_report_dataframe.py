@@ -269,26 +269,15 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
     end_date_frmt = end_date.strftime("%Y-%m-%d")
     start_date_frmt = start_date.strftime("%Y-%m-%d")
 
-    prices = pd.DataFrame()
-
-    asset_colors = {}
-    for i, asset in enumerate(dropdown_tickers_value):
-        # asset_price = web.DataReader(asset, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
-        asset_price = gbm(10, 1, steps_per_year=252).iloc[:, 0]  # gets first column
-        
-        asset_price.name = asset
-        asset_price = asset_price.loc[start_date.strftime("%Y-%m-%d"):]
-        prices[asset] = asset_price
-        asset_colors[asset] = px.colors.qualitative.Alphabet[i]
-        set_progress((str(i + 1), str(len(dropdown_tickers_value))))
-
-    # bench_price = web.DataReader(dropdown_benchmark_value, data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
-    bench_price = gbm(10, 1, steps_per_year=252).iloc[:, 0]  # gets first column
+    set_progress(("1", "3"))
+    # prices = web.DataReader(dropdown_tickers_value + [dropdown_benchmark_value], data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
+    prices = gbm(10, len(dropdown_tickers_value + [dropdown_benchmark_value]), steps_per_year=252)
+    prices.columns = dropdown_tickers_value + [dropdown_benchmark_value]
     
-    bench_price.name = dropdown_benchmark_value
-    bench_price = bench_price.loc[start_date.strftime("%Y-%m-%d"):]
-    prices[dropdown_benchmark_value] = bench_price
-    asset_colors[dropdown_benchmark_value] = px.colors.qualitative.Alphabet[-1]
+    set_progress(("2", "3"))
+    prices = prices.loc[start_date.strftime("%Y-%m-%d"):]
+    
+    set_progress(("3", "3"))
 
     return {
         'dropdown_tickers_value': dropdown_tickers_value,
@@ -296,7 +285,6 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
         'years': radio_years_value,
         'rolling_window_value': radio_rolling_window_value,
         'risk_free_rate': 0.03,
-        'asset_colors': asset_colors,
         'prices': prices.to_json(orient='split'),
     }
 
@@ -310,19 +298,15 @@ def update_wi(data):
 
     prices = pd.read_json(data["prices"], orient='split')
 
-    wi_figures = []
-
-    for asset_name in prices.columns:
-        try:
-            fig_wi_asset = prices[asset_name].returns.wealth_index.plotly()
-        except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-            fig_wi_asset = prices[asset_name].returns.wealth_index.plotly()
-        fig_wi_asset.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
-        wi_figures.append(fig_wi_asset)
-
-    fig_wi = go.Figure(data=sum((fig.data for fig in wi_figures), ()))
-    fig_wi.update_layout(
+    try:
+        wi_figure = prices.returns.wealth_index.plotly()
+    except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
+        wi_figure = prices.returns.wealth_index.plotly()
+    
+    wi_figure.update_layout(
         title="Performance on 1$",
+        xaxis_title="",
+        yaxis_title="",
         legend_title="",
         legend=dict(
             orientation="h",
@@ -332,7 +316,7 @@ def update_wi(data):
             x=1
         ),
     )
-    return fig_wi
+    return wi_figure
 
 
 @app.callback(
@@ -344,21 +328,16 @@ def update_dd(data):
 
     prices = pd.read_json(data["prices"], orient='split')
 
-    dd_figures = []
+    try:
+        fig_dd = prices.returns.wealth_index.drawdown.plotly()
+    except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
+        fig_dd = prices.returns.wealth_index.drawdown.plotly()
 
-    for asset_name in prices.columns:
-        try:
-            fig1 = prices[asset_name].returns.wealth_index.drawdown.plotly()
-        except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-            fig1 = prices[asset_name].returns.wealth_index.drawdown.plotly()
-        fig1.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
-        dd_figures.append(fig1)
-
-    fig_dd = go.Figure(data=sum((fig.data for fig in dd_figures), ()))
     fig_dd.layout.yaxis.tickformat = '.1%'
-
     fig_dd.update_layout(
         title="Drawdown",
+        xaxis_title="",
+        yaxis_title="",
         legend_title="",
         legend=dict(
             orientation="h",
@@ -380,15 +359,10 @@ def update_arets(data):
 
     prices = pd.read_json(data["prices"], orient='split')
 
-    ann_rets = pd.DataFrame()
-    for asset_name in prices.columns:
-        ann_rets = pd.concat([ann_rets, prices[asset_name].annual_returns.data], axis=1)
-    ann_rets = ann_rets.dropna(how='all')
-
     try:
-        ann_rets_fig = px.bar(ann_rets, barmode="group", color_discrete_map=data['asset_colors'])
+        ann_rets_fig = px.bar(prices.annual_returns.data, barmode="group")
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        ann_rets_fig = px.bar(ann_rets, barmode="group", color_discrete_map=data['asset_colors'])
+        ann_rets_fig = px.bar(prices.annual_returns.data, barmode="group")
     ann_rets_fig.layout.yaxis.tickformat = ',.1%'
 
     ann_rets_fig.update_layout(
@@ -415,22 +389,18 @@ def update_graph_rolling_rets(data):
         raise PreventUpdate
 
     prices = pd.read_json(data["prices"], orient='split')
-    rolling_rets_figures = []
+    
+    try:
+        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
+    except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
+        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
 
-    for asset_name in prices.columns:
-        rr = pyinvestingsnippets.RollingReturns(prices[asset_name].returns.data, rolling_window=data['rolling_window_value'])
-        try:
-            fig1_r = rr.plotly()
-        except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-            fig1_r = rr.plotly()
-        fig1_r.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
-        rolling_rets_figures.append(fig1_r)
+    fig_rr.layout.yaxis.tickformat = ',.1%'
 
-    fig = go.Figure(data=sum((fig.data for fig in rolling_rets_figures), ()))
-    fig.layout.yaxis.tickformat = ',.1%'
-
-    fig.update_layout(
+    fig_rr.update_layout(
         title="Rolling Returns",
+        xaxis_title="",
+        yaxis_title="",
         legend_title="",
         legend=dict(
             orientation="h",
@@ -440,7 +410,7 @@ def update_graph_rolling_rets(data):
             x=1
         ),
     )
-    return fig
+    return fig_rr
 
 @app.callback(
     Output('graph_rolling_vol', 'figure'),
@@ -450,22 +420,17 @@ def update_graph_rolling_vol(data):
         raise PreventUpdate
 
     prices = pd.read_json(data["prices"], orient='split')
-    rolling_vol_figures = []
+    
+    try:
+        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
+    except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
+        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
+    fig_rv.layout.yaxis.tickformat = ',.1%'
 
-    for asset_name in prices.columns:
-        rv = pyinvestingsnippets.RollingVolatility(prices[asset_name].returns.data, rolling_window=data['rolling_window_value'], window=252)
-        try:
-            fig1_v = rv.plotly()
-        except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-            fig1_v = rv.plotly()
-        fig1_v.update_traces(line_color=data['asset_colors'][asset_name], line_width=1)
-        rolling_vol_figures.append(fig1_v)
-
-    fig = go.Figure(data=sum((fig.data for fig in rolling_vol_figures), ()))
-    fig.layout.yaxis.tickformat = ',.1%'
-
-    fig.update_layout(
+    fig_rv.update_layout(
         title="Rolling Volatility",
+        xaxis_title="",
+        yaxis_title="",
         legend_title="",
         legend=dict(
             orientation="h",
@@ -475,7 +440,7 @@ def update_graph_rolling_vol(data):
             x=1
         ),
     )
-    return fig
+    return fig_rv
 
 
 @app.callback(
@@ -491,12 +456,15 @@ def update_graph_risk_reward(data):
     for asset_name in prices.columns:
         ann_vol = prices[asset_name].returns.volatility_annualized(252)
         ann_ret = prices[asset_name].returns.annualized(ppy=252)
-        all_values = pd.concat([all_values, pd.DataFrame({'Name': asset_name, 'Risk': ann_vol, 'Return': ann_ret, 'Color': data['asset_colors'][asset_name]}, index=[asset_name])], axis=0)
+        all_values = pd.concat([all_values, pd.DataFrame({
+                'Name': asset_name, 'Risk': ann_vol, 'Return': ann_ret,
+            },
+            index=[asset_name])], axis=0)
 
     try:
-        fig = px.scatter(all_values, x='Risk', y='Return', hover_data=['Name'], color="Name", color_discrete_map=data['asset_colors'])
+        fig = px.scatter(all_values, x='Risk', y='Return', hover_data=['Name'], color="Name")
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        fig = px.scatter(all_values, x='Risk', y='Return', hover_data=['Name'], color="Name", color_discrete_map=data['asset_colors'])
+        fig = px.scatter(all_values, x='Risk', y='Return', hover_data=['Name'], color="Name")
     fig.update_traces(marker_size=10)
     fig.layout.yaxis.tickformat = '.1%'
     fig.layout.xaxis.tickformat = '.1%'
@@ -516,45 +484,45 @@ def update_graph_risk_reward(data):
     return fig
 
 
-@app.callback(
-    Output('graph_stats', 'figure'),
-    Input('memory', 'data'))
-def update_graph_stats(data):
-    if data is None:
-        raise PreventUpdate
+# @app.callback(
+#     Output('graph_stats', 'figure'),
+#     Input('memory', 'data'))
+# def update_graph_stats(data):
+#     if data is None:
+#         raise PreventUpdate
     
-    prices = pd.read_json(data["prices"], orient='split')
+#     prices = pd.read_json(data["prices"], orient='split')
 
-    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'Return Annualized', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
-    for asset_name in prices.columns:
-        asset_values = []
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.total_return*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.cagr*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean.days} days")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max.days} days")
-        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2}")
-        asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
-        asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
-        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if prices[asset_name].monthly_returns.data.shape[0] >=60 else '-' 
-        all_stats.append({'name':asset_name, 'vals': asset_values})
+#     all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'Return Annualized', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
+#     for asset_name in prices.columns:
+#         asset_values = []
+#         asset_values.append(f"{prices[asset_name].returns.wealth_index.total_return*100:.2f}%")
+#         asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
+#         asset_values.append(f"{prices[asset_name].returns.wealth_index.cagr*100:.2f}%")
+#         asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
+#         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
+#         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean.days} days")
+#         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max.days} days")
+#         asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2}")
+#         asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
+#         asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
+#         asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
+#         asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
+#         asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if prices[asset_name].monthly_returns.data.shape[0] >=60 else '-' 
+#         all_stats.append({'name':asset_name, 'vals': asset_values})
 
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=[i['name'] for i in all_stats],
-                    fill_color='paleturquoise',
-                    align='left'),
-        cells=dict(values=[i['vals'] for i in all_stats],
-                fill_color='lavender',
-                align='left'))
-    ])
-    fig.update_layout(
-        title="Stats",
-    )
-    return fig
+#     fig = go.Figure(data=[go.Table(
+#         header=dict(values=[i['name'] for i in all_stats],
+#                     fill_color='paleturquoise',
+#                     align='left'),
+#         cells=dict(values=[i['vals'] for i in all_stats],
+#                 fill_color='lavender',
+#                 align='left'))
+#     ])
+#     fig.update_layout(
+#         title="Stats",
+#     )
+#     return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
