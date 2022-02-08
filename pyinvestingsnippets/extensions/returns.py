@@ -8,7 +8,7 @@ from pandas.api.extensions import register_series_accessor, register_dataframe_a
 @register_series_accessor("returns")
 @register_dataframe_accessor("returns")
 class Returns:
-    """Given a Prices Series, will build the Arithmentic Returns and
+    """Given a pandas object, will build the Arithmentic Returns and
     attach several properties
     """
 

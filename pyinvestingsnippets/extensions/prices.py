@@ -6,7 +6,7 @@ from pandas.api.extensions import register_series_accessor, register_dataframe_a
 @register_series_accessor("prices")
 @register_dataframe_accessor("prices")
 class Prices:
-    """Given a Prices Series, will attach useful attributes"""
+    """Given a pandas object, will attach useful attributes"""
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)

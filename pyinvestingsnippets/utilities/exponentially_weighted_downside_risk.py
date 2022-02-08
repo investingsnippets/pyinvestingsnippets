@@ -1,3 +1,4 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
@@ -9,6 +10,7 @@ class ExponantiallyWeightedDownsideRisk:
     """
 
     def __init__(self, pandas_obj, decay_factor=0.05, window=252) -> None:
+        self._validate(pandas_obj, decay_factor, window)
         self.decay_factor = decay_factor
         self.window = window
         self.downside_risk = (
@@ -17,6 +19,14 @@ class ExponantiallyWeightedDownsideRisk:
             .std()
             .apply(lambda x: x * window ** 0.5)
         )
+
+    @staticmethod
+    def _validate(obj, decay_factor, window):
+        assert isinstance(obj.index, pd.DatetimeIndex)
+        assert (
+            decay_factor > 0 and decay_factor <= 1
+        ), "Smoothing Factor must be 0 < f <= 1"
+        assert window > 0 and isinstance(window, int), "window must be > 0"
 
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:
