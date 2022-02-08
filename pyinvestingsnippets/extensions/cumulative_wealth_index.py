@@ -8,7 +8,7 @@ from pandas.api.extensions import register_series_accessor, register_dataframe_a
 @register_series_accessor("wealth_index")
 @register_dataframe_accessor("wealth_index")
 class CumulativeWealthIndex:
-    """Given Arithmetic Returns Series, will produce the
+    """Given Arithmetic Returns pandas object, will produce the
     Cumulative Wealth Index on 1$.
     """
 

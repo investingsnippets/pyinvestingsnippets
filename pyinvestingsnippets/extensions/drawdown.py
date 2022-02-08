@@ -8,7 +8,8 @@ from pandas.api.extensions import register_series_accessor, register_dataframe_a
 @register_series_accessor("drawdown")
 @register_dataframe_accessor("drawdown")
 class Drawdown:
-    """Given a Wealth Index DataFrame, will produce usefull drawdown metrics"""
+    """Given a Wealth Index pandas object,
+    will produce usefull drawdown metrics"""
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)

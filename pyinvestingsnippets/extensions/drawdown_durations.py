@@ -5,7 +5,9 @@ from pandas.api.extensions import register_series_accessor
 
 @register_series_accessor("drawdown_durations")
 class DrawdownDurations:
-    """Given a Drawdown Series associates properties"""
+    """Given a Drawdown pandas Series,
+    calculates the durations of the different drawdowns
+    and attaches properties"""
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
