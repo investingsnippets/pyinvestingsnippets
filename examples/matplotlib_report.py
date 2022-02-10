@@ -84,7 +84,7 @@ def _plot_stats(ax=None, **kwargs):
 
     data = [
         ['Total Return', '{:.0%}'.format(asset1_wi.total_return), '{:.0%}'.format(asset2_wi.total_return)],
-        ['CAGR', '{:.2%}'.format(asset1_wi.cagr), '{:.2%}'.format(asset2_wi.cagr)],
+        ['CAGR', '{:.2%}'.format(asset1_wi.annualized(252)), '{:.2%}'.format(asset2_wi.annualized(252))],
         ['Max Drawdown', '{:.2%}'.format(asset1_dd.max_drawdown), '{:.2%}'.format(asset2_dd.max_drawdown)],
         ['Avg Drawdown Duration', asset1_dd_dur.mean, asset2_dd_dur.mean],
         ['Max Drawdown Duration', asset1_dd_dur.max, asset2_dd_dur.max],

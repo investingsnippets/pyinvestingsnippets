@@ -35,6 +35,8 @@ def information_ratio(returns, benchmark_returns, periods=252):
     """It measures a trader's ability to generate excess returns relative to a benchmark."""
     return_difference = returns.annualized(periods) - benchmark_returns.annualized(periods)
     volatility = (returns - benchmark_returns).std() * (periods ** 0.5)
+    if volatility == 0:
+        return np.nan
     information_ratio = return_difference.mean() / volatility
     return information_ratio
 
@@ -86,7 +88,7 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
     prices.columns = dropdown_tickers_value + [dropdown_benchmark_value]
     
     set_progress(("2", "3"))
-    prices = prices.loc[start_date.strftime("%Y-%m-%d"):]
+    prices = prices.loc[start_date_frmt:]
     
     set_progress(("3", "3"))
 
@@ -304,12 +306,11 @@ def update_graph_stats(data):
     
     prices = pd.read_json(data["prices"], orient='split')
 
-    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'Return Annualized', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
+    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset_name in prices.columns:
         asset_values = []
         asset_values.append(f"{prices[asset_name].returns.wealth_index.total_return*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.cagr*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.wealth_index.annualized(252)*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean.days} days")

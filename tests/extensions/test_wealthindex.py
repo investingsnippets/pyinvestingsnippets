@@ -19,9 +19,3 @@ def test_get_total_return():
     index_range = pd.date_range(start=datetime(2000, 1, 1), periods=5, freq='AS-JAN')
     returns = pd.Series(data=[np.nan, 0.4, 0.3, 0.2, 0.5], index=index_range)
     np.testing.assert_almost_equal(returns.wealth_index.total_return, 2.276)
-
-def test_get_compound_annual_growth_rate():
-    index_range = pd.date_range(start=datetime(2000, 1, 1), periods=5, freq='AS-JAN')
-    returns = pd.Series(data=[np.nan, 0.4, 0.3, 0.2, 0.5], index=index_range)
-    np.testing.assert_almost_equal(returns.wealth_index.cagr, 0.2678526)
-
