@@ -72,7 +72,7 @@ def _plot_stats(ax=None, **kwargs):
 
     data = [
         ['Total Return'] + [f'{i:.0%}' for i in wi.total_return.values],
-        ['CAGR'] + [f'{i:.2%}' for i in wi.cagr],
+        ['CAGR'] + [f'{i:.2%}' for i in wi.annualized(252)],
         ['Max Drawdown'] + [f'{i:.2%}' for i in dd.max_drawdown],
         ['Avg Drawdown Duration'] + [f'{dd.data.iloc[:, i].drawdown_durations.mean}' for i in range(dd.data.shape[1])],
         ['Max Drawdown Duration'] + [f'{dd.data.iloc[:, i].drawdown_durations.max}' for i in range(dd.data.shape[1])],

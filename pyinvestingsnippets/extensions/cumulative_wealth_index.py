@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import plotly.express as px
 from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
@@ -40,11 +39,9 @@ class CumulativeWealthIndex:
         """Returns the total return"""
         return self._obj.iloc[-1] - 1
 
-    @property
-    def cagr(self):
-        """Returns compound_annual_growth_rate"""
-        no_of_years = len(np.unique(self._obj.index.year))
-        return (self._obj.iloc[-1] ** (1 / no_of_years)) - 1
+    def annualized(self, ppy=252):
+        """Returns Compound Annual Growth Rate"""
+        return (self._obj.iloc[-1] ** (ppy / self._obj.shape[0])) - 1
 
     @property
     def monthly_returns(self):

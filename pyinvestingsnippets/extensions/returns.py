@@ -48,16 +48,17 @@ class Returns:
     def total(self):
         """Returns the total return on an investment.
         It is the aggregate amount that the investment has gained
-        or lost over time, independent of the amount of time involved."""
+        or lost over time, independent of the amount of time involved.
+        """
         return (1 + self._obj).prod() - 1
 
     def wealth_index_since(self, since=None):
         return self._obj[since:].wealth_index
 
     def annualized(self, ppy=252):
-        """Returns the annualized return based on the days provided.
-        This is not a property because the incoming prices are of
-        undefined periodicity.
+        """Returns the annualized return (Compound Annual Growth Rate)
+        based on the days provided. This is not a property
+        because the incoming prices are of undefined periodicity.
         """
         comp_growth = (1 + self._obj).prod()
         return comp_growth ** (ppy / self._obj.shape[0]) - 1
