@@ -44,6 +44,8 @@ pip install -r examples/requirements.txt
 python examples/matplotlib_report.py
 ```
 
+> If on OSX set env var to `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`
+
 ## Release
 
 On master change the version
