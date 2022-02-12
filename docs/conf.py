@@ -10,13 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-sys.path.insert(0, os.path.abspath('..'))
+import re
 
-import pyinvestingsnippets
-
-version = release = pyinvestingsnippets.__version__
+version = release = '-'
+with open('pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
+    version = release = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 
 # -- Project information -----------------------------------------------------
