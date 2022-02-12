@@ -33,7 +33,7 @@ ax_histogram = plt.subplot(gs[2, :])
 
 rets = prices.returns
 
-wi = rets.wealth_index
+wi = rets.cwi
 dd = wi.drawdown
 
 wi.plot(ax=ax_equity, color='blue')

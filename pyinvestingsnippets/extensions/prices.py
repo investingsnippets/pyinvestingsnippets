@@ -28,7 +28,7 @@ class Prices:
 
     @property
     def cumulative_return(self):
-        """Returs the cumulative return on an investment.
+        """Returns the cumulative return on an investment.
         It is the aggregate amount that the investment has gained
         or lost over time, independent of the amount of time involved."""
         return (self._obj.iloc[-1] - self._obj.iloc[0]) / self._obj.iloc[0]

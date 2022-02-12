@@ -41,11 +41,11 @@ ax_beta = plt.subplot(gs[4, 3:])
 asset1_rets = asset1_prices.returns
 asset2_rets = asset2_prices.returns
 
-asset1_wi = asset1_rets.wealth_index
+asset1_wi = asset1_rets.cwi
 asset1_dd = asset1_wi.drawdown
 asset1_dd_dur = asset1_dd.durations
 
-asset2_wi = asset2_rets.wealth_index
+asset2_wi = asset2_rets.cwi
 asset2_dd = asset2_wi.drawdown
 asset2_dd_dur = asset2_dd.durations
 

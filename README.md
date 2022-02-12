@@ -6,7 +6,6 @@
 [![Documentation Status](https://readthedocs.org/projects/pyinvestingsnippets/badge/?version=latest)](https://pyinvestingsnippets.readthedocs.io/en/latest/?badge=latest)
 
 
-
 # Python Module for Investing Snippets
 
 Pandas extensions and utility classes for stock and investment analysis. 

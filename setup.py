@@ -32,7 +32,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests', 'examples', 'secrets']),
     include_package_data=True,
     test_suite='test.test_suite',
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     install_requires=requirements(filename='requirements.txt'),
     setup_requires=['pytest-runner', 'flake8'],
     tests_require=requirements(filename='requirements-test.txt'),

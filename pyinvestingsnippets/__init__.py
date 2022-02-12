@@ -3,7 +3,7 @@
 """Python tools for stock analysis"""
 from .extensions.drawdown import Drawdown
 from .extensions.drawdown_durations import DrawdownDurations
-from .extensions.cumulative_wealth_index import CumulativeWealthIndex
+from .extensions.cwi import CumulativeWealthIndex
 from .extensions.monthly_returns import MonthlyReturns
 from .extensions.annual_returns import AnnualReturns
 from .extensions.weekly_returns import WeeklyReturns
