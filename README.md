@@ -21,6 +21,8 @@ source .venv/bin/activate
 pip install tox
 ```
 
+> On osx with Big Sur there is an [issue](https://github.com/numpy/numpy/issues/17784) with installing cython! Due to that, you can `docker run --rm -v $(PWD):/app --workdir=/app -it --entrypoint=sh python:3.8`
+
 Run tox test and lint
 
 ```

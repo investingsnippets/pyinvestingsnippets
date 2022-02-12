@@ -29,10 +29,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://pyinvestingsnippets.readthedocs.io/',
-    packages=find_packages(exclude=['docs', 'tests', 'examples', 'secrets']),
+    packages=find_packages(exclude=['docs', 'tests', 'examples']),
     include_package_data=True,
-    test_suite='test.test_suite',
-    python_requires='>=3.8',
+    test_suite='tests',
+    python_requires='>=3.7',
     install_requires=requirements(filename='requirements.txt'),
     setup_requires=['pytest-runner', 'flake8'],
     tests_require=requirements(filename='requirements-test.txt'),
@@ -40,9 +40,7 @@ setup(
         'tests':requirements(filename='requirements-test.txt')
     },
     zip_safe=False,
-    entry_points={
-        'console_scripts': ['pyinvestingsnippets = pyinvestingsnippets.__main__:main']
-    },
+    entry_points={},
     license='MIT License',
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
@@ -56,7 +54,7 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Software Development :: Libraries"
     ],
-    keywords=', '.join(['investing', 'financial-data']),
+    keywords=', '.join(['investing', 'financial-data', 'pandas']),
     project_urls={
         'Bug Reports': 'https://github.com/investingsnippets/pyinvestingsnippets/issues',
         'Source': 'https://github.com/investingsnippets/pyinvestingsnippets',
