@@ -14,7 +14,7 @@ import re
 import os
 
 version = release = '-'
-with open('pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
+with open('../pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
     version = release = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 
