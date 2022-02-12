@@ -39,7 +39,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Prepare test environment
       run: tox --notest -p auto --parallel-live
-    - name: Test pip
+    - name: Run tox
       run: tox
   
   pypy:
@@ -67,5 +67,5 @@ jobs:
         run: pip install tox
       - name: Prepare test environment
         run: tox --notest -p auto --parallel-live
-      - name: Test pip
+      - name: Run tox
         run: tox
