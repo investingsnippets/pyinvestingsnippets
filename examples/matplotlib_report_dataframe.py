@@ -43,7 +43,7 @@ ax_beta = plt.subplot(gs[5, 3:])
 prices = asset_prices.prices
 prices.plot(ax=ax_prices)
 
-wi = asset_prices.returns.wealth_index
+wi = asset_prices.returns.cwi
 wi.plot(ax=ax_equity)
 wi.monthly_returns.plot(ax=ax_monthly_returns)
 wi.annual_returns.plot(ax=ax_yearly_returns)

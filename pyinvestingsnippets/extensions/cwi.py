@@ -4,11 +4,11 @@ import plotly.express as px
 from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
-@register_series_accessor("wealth_index")
-@register_dataframe_accessor("wealth_index")
+@register_series_accessor("cwi")
+@register_dataframe_accessor("cwi")
 class CumulativeWealthIndex:
     """Given Arithmetic Returns pandas object, will produce the
-    Cumulative Wealth Index on 1$.
+    Cumulative Wealth Index on 1$ over periods of time.
     """
 
     def __init__(self, pandas_obj):
@@ -69,7 +69,7 @@ class CumulativeWealthIndex:
             ax.legend(loc="best")
 
         ax.axhline(1.0, linestyle="--", color="black", lw=1)
-        ax.set_ylabel("Wealth Index")
+        ax.set_ylabel("Growth")
         return ax
 
     def plotly(self, **kwargs):  # pragma: no cover

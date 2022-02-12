@@ -43,8 +43,8 @@ class WeeklyReturns:
         return self._obj.head(number)
 
     @property
-    def wealth_index(self):
-        return self._obj.wealth_index
+    def cwi(self):
+        return self._obj.cwi
 
     @property
     def srri(self):
@@ -61,8 +61,8 @@ of weekly returns (5 * 52)"
     @property
     def annualized(self):
         """Returns the annualized return."""
-        comp_growth = (1 + self._obj).prod()
-        return comp_growth ** (52 / self._obj.shape[0]) - 1
+        comp = (1 + self._obj).prod()
+        return comp ** (52 / self._obj.shape[0]) - 1
 
     @property
     def volatility_annualized(self):
@@ -113,8 +113,8 @@ of weekly returns (5 * 52)"
         periods = 52
         rf_per_period = (1 + risk_free_rate) ** (1 / periods) - 1
         excess_ret = self.data - rf_per_period
-        comp_growth = (1 + excess_ret).prod()
-        ann_ex_ret = comp_growth ** (periods / excess_ret.shape[0]) - 1
+        comp = (1 + excess_ret).prod()
+        ann_ex_ret = comp ** (periods / excess_ret.shape[0]) - 1
         ann_vol = self.data.std() * (periods ** 0.5)
         return ann_ex_ret / ann_vol
 

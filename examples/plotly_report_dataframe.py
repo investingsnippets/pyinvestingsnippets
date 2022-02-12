@@ -112,9 +112,9 @@ def update_wi(data):
     prices = pd.read_json(data["prices"], orient='split')
 
     try:
-        wi_figure = prices.returns.wealth_index.plotly()
+        wi_figure = prices.returns.cwi.plotly()
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        wi_figure = prices.returns.wealth_index.plotly()
+        wi_figure = prices.returns.cwi.plotly()
     
     wi_figure.update_layout(
         title="Performance on 1$",
@@ -142,9 +142,9 @@ def update_dd(data):
     prices = pd.read_json(data["prices"], orient='split')
 
     try:
-        fig_dd = prices.returns.wealth_index.drawdown.plotly()
+        fig_dd = prices.returns.cwi.drawdown.plotly()
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        fig_dd = prices.returns.wealth_index.drawdown.plotly()
+        fig_dd = prices.returns.cwi.drawdown.plotly()
 
     fig_dd.layout.yaxis.tickformat = '.1%'
     fig_dd.update_layout(
@@ -306,15 +306,16 @@ def update_graph_stats(data):
     
     prices = pd.read_json(data["prices"], orient='split')
 
-    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration', 'Max DrawDown Duration', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
+    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Ret', 'Expected Ret (daily)', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration (days)', 'Max DrawDown Duration (days)', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset_name in prices.columns:
         asset_values = []
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.total_return*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.annualized(252)*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.total*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.average*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.max_drawdown*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.mean.days} days")
-        asset_values.append(f"{prices[asset_name].returns.wealth_index.drawdown.durations.max.days} days")
+        asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.max_drawdown*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.durations.mean.days}")
+        asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.durations.max.days}")
         asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2}")
         asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
         asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")

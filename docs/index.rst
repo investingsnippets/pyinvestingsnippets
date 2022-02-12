@@ -15,7 +15,7 @@ Quick links
 Features
 --------
 
-* WealthIndex
+* Cumulative Wealth Index Growth
 * Drawdown
 * `SRRI <https://www.esma.europa.eu/sites/default/files/library/2015/11/10_673.pdf>`_
 * Weekly/Monthly/Annual Returns
@@ -44,7 +44,7 @@ Here is a simple example ::
 
       aapl_rets = aapl_prices['AAPL'].returns
 
-      aapl_wi = aapl_rets.wealth_index
+      aapl_wi = aapl_rets.cwi
       aapl_dd = aapl_wi.drawdown
       aapl_dd_dur = aapl_dd.durations
 
