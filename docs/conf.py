@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import re
+import os
 
 version = release = '-'
 with open('pyinvestingsnippets/__init__.py', 'rt', encoding='utf8') as f:
