@@ -42,9 +42,9 @@ class DrawdownDurations:
         return self._obj.loc[idx]
 
     @property
-    def mean(self):
-        return self._obj.mean()
+    def mean(self) -> pd.Timedelta:
+        return self._obj.mean() if self._obj.shape[0] > 0 else pd.Timedelta("0 days")
 
     @property
-    def max(self):
-        return self._obj.max()
+    def max(self) -> pd.Timedelta:
+        return self._obj.max() if self._obj.shape[0] > 0 else pd.Timedelta("0 days")
