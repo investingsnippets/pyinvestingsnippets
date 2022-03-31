@@ -23,7 +23,7 @@ from .utilities.beta_covariance import BetaCovariance
 from .utilities.beta_regression import BetaRegression
 
 
-__version__ = "3.0.1"
+__version__ = "3.0.2"
 __all__ = [
     "Drawdown",
     "DrawdownDurations",
