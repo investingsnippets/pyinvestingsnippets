@@ -15,9 +15,7 @@ class WeeklyReturns:
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = (
-            pandas_obj.fillna(method="pad").resample("W").last().pct_change()
-        )
+        self._obj = pandas_obj.fillna(method="pad").resample("W").last().pct_change()
 
     @staticmethod
     def _validate(obj):
