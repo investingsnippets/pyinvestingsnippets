@@ -16,7 +16,7 @@ class AnnualReturns:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = (
-            pandas_obj.fillna(method="pad").resample("Y").last().pct_change()[1:]
+            pandas_obj.fillna(method="pad").resample("Y").last().pct_change()
         )
         self._obj.index = self._obj.index.year
 
@@ -70,7 +70,7 @@ class AnnualReturns:
         -------
         float
         """
-        return -np.percentile(self._obj, percentile)
+        return -np.percentile(self._obj[1:], percentile)
 
     def cvar(self, percentile=5):
         """Returns the Conditional VaR at a specified level

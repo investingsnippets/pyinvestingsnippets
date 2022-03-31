@@ -25,7 +25,9 @@ def test_annualized():
 def test_var():
     prices = tu.gbm(10, 1, steps_per_year=252)
     var = prices.returns.var()
+    assert not np.isnan(var)
     cvar = prices.returns.cvar()
+    assert not np.isnan(cvar)
 
 def test_total_return():
     index_range = pd.date_range(start=datetime(2000, 1, 1), periods=5, freq='D')

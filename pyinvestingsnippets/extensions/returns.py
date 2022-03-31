@@ -14,7 +14,7 @@ class Returns:
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = pandas_obj.fillna(method="pad").pct_change()[1:]
+        self._obj = pandas_obj.fillna(method="pad").pct_change()
 
     @staticmethod
     def _validate(obj):
@@ -92,7 +92,7 @@ class Returns:
         -------
         float
         """
-        return -np.percentile(self._obj, percentile)
+        return -np.percentile(self._obj[1:], percentile)
 
     def cvar(self, percentile=5):
         """Returns the Conditional VaR at a specified level
@@ -130,7 +130,7 @@ class Returns:
 
     @property
     def srri(self):
-        return self._obj.srri
+        return self._obj[1:].srri
 
     def plot(self, ax=None):  # pragma: no cover
         if ax is None:
