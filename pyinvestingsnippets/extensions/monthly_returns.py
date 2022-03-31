@@ -16,7 +16,7 @@ class MonthlyReturns:
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
         self._obj = (
-            pandas_obj.fillna(method="pad").resample("M").last().pct_change()[1:]
+            pandas_obj.fillna(method="pad").resample("M").last().pct_change()
         )
 
     @staticmethod
@@ -49,10 +49,10 @@ class MonthlyReturns:
     @property
     def srri(self):
         assert (
-            self._obj.shape[0] >= 60
+            self._obj[1:].shape[0] >= 60
         ), "Please provide 5 years \
 of monthly returns (5 * 12)"
-        return self._obj.iloc[-60:].srri
+        return self._obj[1:].iloc[-60:].srri
 
     @property
     def positive_monthly_returns_percentage(self):
@@ -81,7 +81,7 @@ of monthly returns (5 * 12)"
         -------
         float
         """
-        return -np.percentile(self._obj, percentile)
+        return -np.percentile(self._obj[1:], percentile)
 
     def cvar(self, percentile=5):
         """Returns the Conditional VaR at a specified level
