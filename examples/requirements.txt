@@ -1,9 +1,9 @@
 matplotlib
 seaborn
-pandas-datareader==0.10.0
-plotly==5.5.0
-dash==2.0.0
-dash-bootstrap-components==1.0.2
+pandas-datareader
+plotly
+dash
+dash-bootstrap-components
 diskcache
 multiprocess
 psutil
