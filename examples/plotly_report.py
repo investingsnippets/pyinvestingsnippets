@@ -196,7 +196,8 @@ def update_arets(data):
 
     ann_rets = pd.DataFrame()
     for asset_name in prices.columns:
-        ann_rets = pd.concat([ann_rets, prices[asset_name].annual_returns.data], axis=1)
+        annual_returns = prices[asset_name].fillna(method="pad").resample("Y").last().pct_change()
+        ann_rets = pd.concat([ann_rets, annual_returns], axis=1)
     ann_rets = ann_rets.dropna(how='all')
 
     try:
@@ -341,6 +342,7 @@ def update_graph_stats(data):
 
     all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Return', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration (days)', 'Max DrawDown Duration (days)', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset_name in prices.columns:
+        monthly_returns = prices[asset_name].fillna(method="pad").resample("M").last().pct_change()
         asset_values = []
         asset_values.append(f"{prices[asset_name].returns.cwi.total_return*100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.cwi.annualized(252)*100:.2f}%")
@@ -353,8 +355,8 @@ def update_graph_stats(data):
         asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
         asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
         asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
-        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if prices[asset_name].monthly_returns.data.shape[0] >=60 else '-' 
-        all_stats.append({'name':asset_name, 'vals': asset_values})
+        asset_values.append(f"{monthly_returns.srri.risk_class}") if monthly_returns.shape[0] >= 60 else '-'
+        all_stats.append({'name': asset_name, 'vals': asset_values})
 
     fig = go.Figure(data=[go.Table(
         header=dict(values=[i['name'] for i in all_stats],

@@ -27,7 +27,7 @@ class BetaCovariance:
     @property
     def beta(self):
         """
-        Calculates the beta of a Stock over the Benchmark index using linear regression
+        Calculates the beta of a Stock over the Benchmark index using simple covariance
 
         Returns
         -------

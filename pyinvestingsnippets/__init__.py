@@ -4,9 +4,6 @@
 from .extensions.drawdown import Drawdown
 from .extensions.drawdown_durations import DrawdownDurations
 from .extensions.cwi import CumulativeWealthIndex
-from .extensions.monthly_returns import MonthlyReturns
-from .extensions.annual_returns import AnnualReturns
-from .extensions.weekly_returns import WeeklyReturns
 from .extensions.prices import Prices
 from .extensions.returns import Returns
 from .extensions.log_returns import LogReturns
@@ -30,9 +27,6 @@ __all__ = [
     "CumulativeWealthIndex",
     "Prices",
     "SRRI",
-    "MonthlyReturns",
-    "WeeklyReturns",
-    "AnnualReturns",
     "Returns",
     "LogReturns",
     "RollingReturns",

@@ -17,7 +17,9 @@ class SRRI:
     non overlapping periods of the duration of 1/m years.
     This means m=52 and T= 260 for weekly returns, and m=12 and T=60 for monthly
     returns; and where r-mean_f is the arithmetic mean of
-    the returns of the fund over the T periods
+    the returns of the fund over the T periods.
+
+    SRRI is calculated on a 5 year period.
     """
 
     RISK_CLASSES = {
@@ -35,6 +37,9 @@ class SRRI:
         self._validate(pandas_obj)
         deviations = pandas_obj - pandas_obj.mean()
         squared_deviations = np.sum(deviations ** 2)
+        assert pandas_obj.shape[0] in [260, 60],\
+            "Need 5 years weekly or monthly returns." \
+            "Please consult the documentation."
         factor = 52 / (260 - 1) if pandas_obj.shape[0] == 260 else 12 / (60 - 1)
         to_root = factor * squared_deviations
         self.srri_value = np.sqrt(to_root)
@@ -55,8 +60,6 @@ returns data (5 * 52) or 5 * 12 monthly returns"
     @property
     def risk_class(self):
         for i in SRRI.RISK_CLASSES:
-            if (
-                self.srri_value >= SRRI.RISK_CLASSES[i]["low"]
-                and self.srri_value < SRRI.RISK_CLASSES[i]["high"]
-            ):
+            if SRRI.RISK_CLASSES[i]["low"] <= self.srri_value \
+                    < SRRI.RISK_CLASSES[i]["high"]:
                 return i

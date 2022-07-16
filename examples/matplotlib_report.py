@@ -69,14 +69,18 @@ rolling_vol = pyinvestingsnippets.RollingVolatility(asset1_rets.data, rolling_wi
 rolling_beta = pyinvestingsnippets.RollingBetaCovariance(asset2_rets.data, asset1_rets.data, 30)
 rolling_beta.plot(ax=ax_beta, color='blue', label='cov')
 
-# get the total beta
-beta = pyinvestingsnippets.BetaCovariance(asset2_wi.monthly_returns.data, asset1_wi.monthly_returns.data)
+# Beta in Yahoo is calculated over 5Y monthly returns.
+# Monthly prices should be the close price on the first trading day of each month
+monthly_returns_asset1 = asset1_prices.fillna(method="pad").resample('BMS').first().pct_change()
+monthly_returns_asset2 = asset2_prices.fillna(method="pad").resample('BMS').first().pct_change()
+beta = pyinvestingsnippets.BetaCovariance(monthly_returns_asset2, monthly_returns_asset1)
 
 rolling_rets.plot(ax=ax_rolling_returns, color='blue')
 rolling_vol.plot(ax=ax_rolling_vol, color='blue')
 
 downside_risk = pyinvestingsnippets.ExponantiallyWeightedDownsideRisk(asset1_rets.data)
 downside_risk.plot(ax=ax_downside_risk, color='blue')
+
 
 def _plot_stats(ax=None, **kwargs):
     if ax is None:
@@ -91,12 +95,14 @@ def _plot_stats(ax=None, **kwargs):
         ['Beta', '{:.2}'.format(beta.beta), '1']
     ]
 
-    if asset1_prices.monthly_returns.data.shape[0] >= 60 and \
-        asset2_prices.monthly_returns.data.shape[0] >= 60:
-        data.append(['SRRI', '{}/7 ({:.2%})'.format(asset1_prices.monthly_returns.srri.risk_class,
-                    asset1_prices.monthly_returns.srri.value),
-                '{}/7 ({:.2%})'.format(asset2_prices.monthly_returns.srri.risk_class,
-                    asset2_prices.monthly_returns.srri.value)])
+    monthly_returns1 = asset1_prices.fillna(method="pad").resample('M').last().pct_change()
+    monthly_returns2 = asset2_prices.fillna(method="pad").resample('M').last().pct_change()
+    if monthly_returns1.shape[0] >= 60 and \
+        monthly_returns2.shape[0] >= 60:
+        data.append(['SRRI', '{}/7 ({:.2%})'.format(monthly_returns1.srri.risk_class,
+                    monthly_returns1.srri.value),
+                '{}/7 ({:.2%})'.format(monthly_returns2.srri.risk_class,
+                    monthly_returns2.srri.value)])
 
     column_labels=["Metric", f"{ASSET_1}", f"{ASSET_2}"]
     ax.axis('tight')
