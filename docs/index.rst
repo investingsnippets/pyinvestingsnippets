@@ -6,6 +6,18 @@ pyinvestingsnippets
 PyInvestingSnippets is a python library which implements `pandas <https://pandas.pydata.org/>`_ extensions
 for stock and investment portfolio analysis. Several utilities are also provided.
 
+Installation
+------------
+
+::
+
+    pip install pyinvestingsnippets
+
+Pyinvestingsnippets is listed in `PyPI <https://pypi.org/project/pyinvestingsnippets/>`_ and
+can be installed with ``pip``.
+
+**Prerequisites**: pyinvestingsnippets requires Python 3.7 or newer
+
 Quick links
 -----------
 
@@ -18,7 +30,6 @@ Features
 * Cumulative Wealth Index Growth
 * Drawdown
 * `SRRI <https://www.esma.europa.eu/sites/default/files/library/2015/11/10_673.pdf>`_
-* Weekly/Monthly/Annual Returns
 * Rolling Returns
 * Rolling Volatility
 * Beta (regression/covariance)
@@ -54,22 +65,5 @@ Here is a simple example ::
    
 Complete examples can be found `here <https://github.com/investingsnippets/pyinvestingsnippets/tree/master/examples>`_.
 
-
-Installation
-------------
-
-::
-
-    pip install pyinvestingsnippets
-
-Pyinvestingsnippets is listed in `PyPI <https://pypi.org/project/pyinvestingsnippets/>`_ and
-can be installed with ``pip``.
-
-**Prerequisites**: pyinvestingsnippets requires Python 3.7 or newer
-
 .. toctree::
    :titlesonly:
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
