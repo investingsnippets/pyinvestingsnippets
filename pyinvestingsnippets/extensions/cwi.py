@@ -1,19 +1,44 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
+import numpy as np
+import inspect
 from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
+from pyinvestingsnippets.exceptions\
+    .cwi_not_properly_called_exception import CwiNotProperlyCalledException
 
 
 @register_series_accessor("cwi")
 @register_dataframe_accessor("cwi")
 class CumulativeWealthIndex:
-    """Given Arithmetic Returns pandas object, will produce the
-    Cumulative Wealth Index on 1$ over periods of time.
+    """Given Log or Arithmetic Returns Extension pandas object,
+    will produce the Cumulative Wealth Index on 1 unit
+    over periods of time.
+
+    This class cannot be called directly but only through"
+    * :func:`.returns <pyinvestingsnippets.Returns>`
+    * :func:`.log_returns <pyinvestingsnippets.LogReturns>`
+    extensions
     """
 
     def __init__(self, pandas_obj):
         self._validate(pandas_obj)
-        self._obj = ((pandas_obj + 1).cumprod()) * 1
+        stack = inspect.stack()
+        try:
+            caller_deep_class = stack[2][0].f_locals["self"].__class__.__name__
+        except:
+            raise CwiNotProperlyCalledException("Cannot be called directly."
+                                                "Please read the documentation!")
+
+        if caller_deep_class == 'Returns':
+            self._obj = ((pandas_obj + 1).cumprod()) * 1
+        elif caller_deep_class == 'LogReturns':
+            self._obj = np.exp(pandas_obj.cumsum()) * 1
+        else:
+            raise CwiNotProperlyCalledException(
+                "Please use the returns or log_returns"
+                " extensions to call this extension!")
+
         self._obj.iloc[0] = 1
 
     @staticmethod
@@ -45,15 +70,15 @@ class CumulativeWealthIndex:
 
     @property
     def monthly_returns(self):
-        return self._obj.monthly_returns
+        return self._obj.fillna(method="pad").resample("M").last().pct_change()
 
     @property
     def weekly_returns(self):
-        return self._obj.weekly_returns
+        return self._obj.fillna(method="pad").resample("W").last().pct_change()
 
     @property
     def annual_returns(self):
-        return self._obj.annual_returns
+        return self._obj.fillna(method="pad").resample("Y").last().pct_change()
 
     def plot(self, ax=None, **kwargs):  # pragma: no cover
         if ax is None:

@@ -78,8 +78,10 @@ def _plot_stats(ax=None, **kwargs):
         ['Max Drawdown Duration'] + [f'{dd.data.iloc[:, i].drawdown_durations.max}' for i in range(dd.data.shape[1])],
         ['Beta'] + [f'{pyinvestingsnippets.BetaCovariance(returns.data.iloc[:, i], returns.data.iloc[:, -1]).beta:.2f}' for i in range(returns().shape[1])],
     ]
-    if asset_prices.monthly_returns.data.shape[0] >=60 :
-        data.append(['SRRI'] + [f'{asset_prices.monthly_returns.data.iloc[-60:, i].srri.risk_class}/7 ({asset_prices.monthly_returns.data.iloc[-60:, i].srri.value:.2%})' for i in range(dd.data.shape[1])])
+
+    monthly_returns = asset_prices.fillna(method="pad").resample('M').last().pct_change()
+    if monthly_returns.shape[0] >= 60:
+        data.append(['SRRI'] + [f'{monthly_returns.iloc[-60:, i].srri.risk_class}/7 ({monthly_returns.iloc[-60:, i].srri.value:.2%})' for i in range(dd.data.shape[1])])
     
     column_labels=["Metric"] + [f'{i}' for i in asset_prices.columns.values]
     ax.axis('tight')

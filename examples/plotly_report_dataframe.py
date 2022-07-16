@@ -1,35 +1,35 @@
+import datetime
+import os
+import sys
+
 import dash
 import dash_bootstrap_components as dbc
+import diskcache
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from dash import html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash.long_callback import DiskcacheLongCallbackManager
-from utils import gbm
+
 from _plotly_dash_board_template import content, configure_sidebar
+from utils import gbm
 
-import plotly.graph_objects as go
-import plotly.express as px
-
-import pandas as pd
-import numpy as np
-
-import datetime
-import diskcache
-
-import pandas_datareader as web
-
-import sys, os
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
-import pyinvestingsnippets 
+import pyinvestingsnippets
 
 ASSET_TICKERS = ['Asset1', 'Asset2', 'Asset3', 'Asset4']
 BENCHMARK_TICKERS = ['Bench1', 'Bench2']
+
 
 def tracking_error(r_a, r_b):
     """
     Returns the Tracking Error between the two return series
     """
-    return np.sqrt(((r_a - r_b)**2).sum())
+    return np.sqrt(((r_a - r_b) ** 2).sum())
+
 
 def information_ratio(returns, benchmark_returns, periods=252):
     """It measures a trader's ability to generate excess returns relative to a benchmark."""
@@ -40,6 +40,7 @@ def information_ratio(returns, benchmark_returns, periods=252):
     information_ratio = return_difference.mean() / volatility
     return information_ratio
 
+
 def modigliani_ratio(returns, benchmark_returns, rf, periods=252):
     """The Modigliani ratio (M2) measures the returns of the portfolio,
     adjusted for the risk of the portfolio relative to that of some benchmark."""
@@ -48,37 +49,40 @@ def modigliani_ratio(returns, benchmark_returns, rf, periods=252):
     m2_ratio = (sharpe_ratio * benchmark_volatility) + rf
     return m2_ratio
 
+
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheLongCallbackManager(cache)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], long_callback_manager=long_callback_manager)
 app.layout = html.Div([configure_sidebar(ASSET_TICKERS, BENCHMARK_TICKERS), content])
 
+
 @app.long_callback(Output('memory', 'data'),
-              [Input('submit_button', 'n_clicks')],
-              [State('dropdown_tickers', 'value'),
-                State('dropdown_benchmark', 'value'),
-                State('radio_years', 'value'),
-                State('radio_rolling_window', 'value')
-              ],
-              running=[
-                (Output("submit_button", "disabled"), True, False),
-                (Output("cancel_button_id", "disabled"), False, True),
-                (
-                    Output("progress_bar", "style"),
-                    {"visibility": "visible"},
-                    {"visibility": "hidden"},
-                ),
-              ],
-              cancel=[Input("cancel_button_id", "n_clicks")],
-              progress=[Output("progress_bar", "value"), Output("progress_bar", "max")],
-              prevent_initial_call=True,
-              )
-def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benchmark_value, radio_years_value, radio_rolling_window_value):
+                   [Input('submit_button', 'n_clicks')],
+                   [State('dropdown_tickers', 'value'),
+                    State('dropdown_benchmark', 'value'),
+                    State('radio_years', 'value'),
+                    State('radio_rolling_window', 'value')
+                    ],
+                   running=[
+                       (Output("submit_button", "disabled"), True, False),
+                       (Output("cancel_button_id", "disabled"), False, True),
+                       (
+                               Output("progress_bar", "style"),
+                               {"visibility": "visible"},
+                               {"visibility": "hidden"},
+                       ),
+                   ],
+                   cancel=[Input("cancel_button_id", "n_clicks")],
+                   progress=[Output("progress_bar", "value"), Output("progress_bar", "max")],
+                   prevent_initial_call=True,
+                   )
+def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benchmark_value, radio_years_value,
+                   radio_rolling_window_value):
     if not n_clicks:
         return {}
-    
+
     end_date = datetime.datetime.now()
-    start_date = end_date - datetime.timedelta(days=radio_years_value*365)
+    start_date = end_date - datetime.timedelta(days=radio_years_value * 365)
     end_date_frmt = end_date.strftime("%Y-%m-%d")
     start_date_frmt = start_date.strftime("%Y-%m-%d")
 
@@ -86,10 +90,10 @@ def collect_params(set_progress, n_clicks, dropdown_tickers_value, dropdown_benc
     # prices = web.DataReader(dropdown_tickers_value + [dropdown_benchmark_value], data_source='yahoo', start=start_date_frmt, end=end_date_frmt)['Adj Close']
     prices = gbm(10, len(dropdown_tickers_value + [dropdown_benchmark_value]), steps_per_year=252)
     prices.columns = dropdown_tickers_value + [dropdown_benchmark_value]
-    
+
     set_progress(("2", "3"))
     prices = prices.loc[start_date_frmt:]
-    
+
     set_progress(("3", "3"))
 
     return {
@@ -115,7 +119,7 @@ def update_wi(data):
         wi_figure = prices.returns.cwi.plotly()
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
         wi_figure = prices.returns.cwi.plotly()
-    
+
     wi_figure.update_layout(
         title="Performance on 1$",
         xaxis_title="",
@@ -171,11 +175,12 @@ def update_arets(data):
         raise PreventUpdate
 
     prices = pd.read_json(data["prices"], orient='split')
+    annual_returns = prices.fillna(method="pad").resample("Y").last().pct_change()
 
     try:
-        ann_rets_fig = px.bar(prices.annual_returns.data, barmode="group")
+        ann_rets_fig = px.bar(annual_returns, barmode="group")
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        ann_rets_fig = px.bar(prices.annual_returns.data, barmode="group")
+        ann_rets_fig = px.bar(annual_returns, barmode="group")
     ann_rets_fig.layout.yaxis.tickformat = ',.1%'
 
     ann_rets_fig.update_layout(
@@ -202,11 +207,13 @@ def update_graph_rolling_rets(data):
         raise PreventUpdate
 
     prices = pd.read_json(data["prices"], orient='split')
-    
+
     try:
-        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
+        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data,
+                                                    rolling_window=data['rolling_window_value']).plotly()
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data, rolling_window=data['rolling_window_value']).plotly()
+        fig_rr = pyinvestingsnippets.RollingReturns(prices.returns.data,
+                                                    rolling_window=data['rolling_window_value']).plotly()
 
     fig_rr.layout.yaxis.tickformat = ',.1%'
 
@@ -225,6 +232,7 @@ def update_graph_rolling_rets(data):
     )
     return fig_rr
 
+
 @app.callback(
     Output('graph_rolling_vol', 'figure'),
     Input('memory', 'data'))
@@ -233,11 +241,13 @@ def update_graph_rolling_vol(data):
         raise PreventUpdate
 
     prices = pd.read_json(data["prices"], orient='split')
-    
+
     try:
-        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
+        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'],
+                                                       window=252).plotly()
     except Exception:  # due to bug in plotly https://github.com/plotly/plotly.py/issues/3441
-        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'], window=252).plotly()
+        fig_rv = pyinvestingsnippets.RollingVolatility(prices.returns.data, rolling_window=data['rolling_window_value'],
+                                                       window=252).plotly()
     fig_rv.layout.yaxis.tickformat = ',.1%'
 
     fig_rv.update_layout(
@@ -270,8 +280,8 @@ def update_graph_risk_reward(data):
         ann_vol = prices[asset_name].returns.volatility_annualized(252)
         ann_ret = prices[asset_name].returns.annualized(ppy=252)
         all_values = pd.concat([all_values, pd.DataFrame({
-                'Name': asset_name, 'Risk': ann_vol, 'Return': ann_ret,
-            },
+            'Name': asset_name, 'Risk': ann_vol, 'Return': ann_ret,
+        },
             index=[asset_name])], axis=0)
 
     try:
@@ -303,39 +313,47 @@ def update_graph_risk_reward(data):
 def update_graph_stats(data):
     if data is None:
         raise PreventUpdate
-    
+
     prices = pd.read_json(data["prices"], orient='split')
 
-    all_stats = [{'name': "Stat\Symbol", 'vals': ['Total Ret', 'Expected Ret (daily)', 'CAGR', 'Volatility', 'Max DrawDown', 'Min DrawDown Duration (days)', 'Max DrawDown Duration (days)', 'Beta', 'Tracking Error', 'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
+    all_stats = [{'name': "Stat\Symbol",
+                  'vals': ['Total Ret', 'Expected Ret (daily)', 'CAGR', 'Volatility', 'Max DrawDown',
+                           'Min DrawDown Duration (days)', 'Max DrawDown Duration (days)', 'Beta', 'Tracking Error',
+                           'Sharpe Ratio', 'M2 Ratio', 'Information Ratio', 'SRRI']}]
     for asset_name in prices.columns:
+        monthly_returns = prices[asset_name].fillna(method="pad").resample("M").last().pct_change()
         asset_values = []
-        asset_values.append(f"{prices[asset_name].returns.total*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.average*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252)*100:.2f}%")
-        asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.max_drawdown*100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.total * 100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.average * 100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.annualized(252) * 100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.volatility_annualized(252) * 100:.2f}%")
+        asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.max_drawdown * 100:.2f}%")
         asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.durations.mean.days}")
         asset_values.append(f"{prices[asset_name].returns.cwi.drawdown.durations.max.days}")
-        asset_values.append(f"{pyinvestingsnippets.BetaCovariance(prices.iloc[: , -1].returns.data, prices[asset_name].returns.data).beta:.2}")
-        asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[: , -1].returns.data):.4f}")
+        asset_values.append(
+            f"{pyinvestingsnippets.BetaCovariance(prices.iloc[:, -1].returns.data, prices[asset_name].returns.data).beta:.2}")
+        asset_values.append(f"{tracking_error(prices[asset_name].returns.data, prices.iloc[:, -1].returns.data):.4f}")
         asset_values.append(f"{prices[asset_name].returns.sharpe(data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, data['risk_free_rate'], 252):.2f}")
-        asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[: , -1].returns, 252):.2f}")
-        asset_values.append(f"{prices[asset_name].monthly_returns.srri.risk_class}") if prices[asset_name].monthly_returns.data.shape[0] >=60 else '-' 
-        all_stats.append({'name':asset_name, 'vals': asset_values})
+        asset_values.append(
+            f"{modigliani_ratio(prices[asset_name].returns, prices.iloc[:, -1].returns, data['risk_free_rate'], 252):.2f}")
+        asset_values.append(f"{information_ratio(prices[asset_name].returns, prices.iloc[:, -1].returns, 252):.2f}")
+        asset_values.append(f"{monthly_returns.srri.risk_class}") if \
+        monthly_returns.shape[0] >= 60 else '-'
+        all_stats.append({'name': asset_name, 'vals': asset_values})
 
     fig = go.Figure(data=[go.Table(
         header=dict(values=[i['name'] for i in all_stats],
                     fill_color='paleturquoise',
                     align='left'),
         cells=dict(values=[i['vals'] for i in all_stats],
-                fill_color='lavender',
-                align='left'))
+                   fill_color='lavender',
+                   align='left'))
     ])
     fig.update_layout(
         title="Stats",
     )
     return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

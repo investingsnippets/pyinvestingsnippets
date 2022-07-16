@@ -32,15 +32,20 @@ class LogReturns:
 
     @property
     def total(self):
-        """Returss the total return on an investment.
+        """Returns the total return on an investment.
         It is the aggregate amount that the investment has gained
         or lost over time, independent of the amount of time involved."""
         return np.expm1(self._obj.sum())
 
-    def plot(self):  # pragma: no cover
-        gridkw = dict(height_ratios=[5, 1])
-        fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw=gridkw)
-        fig.suptitle("Log Returns", weight="bold")
-        sns.histplot(data=self._obj, ax=ax1)  # array, top subplot
-        sns.boxplot(data=self._obj, ax=ax2, width=0.4)  # bottom subplot
-        return fig
+    @property
+    def cwi(self):
+        return self._obj.cwi
+
+    def plot(self, ax=None):  # pragma: no cover
+        if ax is None:
+            fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw=dict(height_ratios=[5, 1]))
+            fig.suptitle("Log Returns", weight="bold")
+            sns.histplot(data=self._obj, ax=ax1)
+            sns.boxplot(data=self._obj, ax=ax2, width=0.4)
+            return fig
+        return sns.histplot(data=self._obj, ax=ax)
