@@ -59,10 +59,10 @@ python examples/matplotlib_report.py
 
 ## Release
 
-On master change the version
+On master change the version in `pyinvestingsnippets/__init__.py`
 
 ```bash
-git commit -am "v0.0.3"
+git commit -am "v<VERSION>"
 git tag -a v0.0.3
 git push origin --tags
 git push -u
