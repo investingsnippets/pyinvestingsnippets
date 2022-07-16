@@ -8,14 +8,24 @@
 
 # Python Module for Investing Snippets
 
-Pandas extensions and utility classes for stock and investment analysis. 
+Pandas extensions and utility classes for stock and investment analysis.
 
+
+## Installation
+
+```bash
+pip install pyinvestingsnippets
+```
+
+## Examples and Documentation
+
+Please see detailed examples under the `examples` directory and read the documentation [here](https://pyinvestingsnippets.readthedocs.io/en/latest/)
 
 ## Develop
 
 First install the required venv and tox
 
-```
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install tox
@@ -25,19 +35,19 @@ pip install tox
 
 Run tox test and lint
 
-```
+```bash
 tox
 ```
 
 Install the package locally
 
-```
+```bash
 pip install .tox/dist/pyinvestingsnippets-<version>.zip
 ```
 
 ## Run examples
 
-```
+```bash
 python3 -m venv .venvtest
 source .venvtest/bin/activate
 pip install -r requirements.txt
@@ -51,7 +61,7 @@ python examples/matplotlib_report.py
 
 On master change the version
 
-```
+```bash
 git commit -am "v0.0.3"
 git tag -a v0.0.3
 git push origin --tags
