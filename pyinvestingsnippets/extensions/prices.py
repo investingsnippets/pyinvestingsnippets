@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
 
 
@@ -51,3 +52,11 @@ class Prices:
         ax.set_ylabel("Price")
         ax.set_xlabel("Date")
         return ax
+
+    def plotly(self, **kwargs):  # pragma: no cover
+        fig = px.line(self._obj, **kwargs)
+        fig.update_layout(
+            title="Price",
+            legend_title="Symbol",
+        )
+        return fig
