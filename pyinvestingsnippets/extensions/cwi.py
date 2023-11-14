@@ -4,7 +4,7 @@ import plotly.express as px
 import numpy as np
 import inspect
 from pandas.api.extensions import register_series_accessor, register_dataframe_accessor
-from pyinvestingsnippets.exceptions\
+from pyinvestingsnippets.exceptions \
     .cwi_not_properly_called_exception import CwiNotProperlyCalledException
 
 
@@ -26,7 +26,7 @@ class CumulativeWealthIndex:
         stack = inspect.stack()
         try:
             caller_deep_class = stack[2][0].f_locals["self"].__class__.__name__
-        except:
+        except Exception:
             raise CwiNotProperlyCalledException("Cannot be called directly."
                                                 "Please read the documentation!")
 

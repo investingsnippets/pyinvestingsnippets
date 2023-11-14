@@ -38,8 +38,8 @@ class RollingBetaRegression:
 
         for i in range((obs - window)):
             model = LinearRegression().fit(
-                self.independent_variable.to_numpy()[i : i + window + 1].reshape(-1, 1),
-                self.dependent_variable.to_numpy()[i : i + window + 1],
+                self.independent_variable.to_numpy()[i: i + window + 1].reshape(-1, 1),
+                self.dependent_variable.to_numpy()[i: i + window + 1],
             )
 
             betas[i + window] = model.coef_[0]

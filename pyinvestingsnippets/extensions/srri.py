@@ -37,7 +37,7 @@ class SRRI:
         self._validate(pandas_obj)
         deviations = pandas_obj - pandas_obj.mean()
         squared_deviations = np.sum(deviations ** 2)
-        assert pandas_obj.shape[0] in [260, 60],\
+        assert pandas_obj.shape[0] in [260, 60], \
             "Need 5 years weekly or monthly returns." \
             "Please consult the documentation."
         factor = 52 / (260 - 1) if pandas_obj.shape[0] == 260 else 12 / (60 - 1)
